@@ -1,0 +1,25 @@
+{
+  "name": "blog-api",
+  "version": "1.0.0",
+  "description": "api to use for blog app to two clients",
+  "homepage": "https://github.com/JosefPCT/blog-api#readme",
+  "bugs": {
+    "url": "https://github.com/JosefPCT/blog-api/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JosefPCT/blog-api.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node --watch app.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1"
+  }
+}
