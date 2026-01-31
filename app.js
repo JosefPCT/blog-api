@@ -8,9 +8,12 @@ const express = require('express');
 const PORT = process.env.PORT || 3000;
 const app = express();
 
-
 // Routing
 const routes = require('./routes');
+
+// Makes data payload's body available in `req.body` object
+app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
   res.send('Homepage');
