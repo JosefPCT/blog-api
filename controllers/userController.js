@@ -25,10 +25,17 @@ module.exports.specificUserGetRoute = [
   }    
 ]
 
+// Handler for POST '/users'
+// Creates a user based on sent information via JSON
+// TODO:
+// Need to validate information sent
+// Check if sent email value already exists in the DB
+// Return proper status and message
 module.exports.usersPostRoute = [
   async(req, res) => {
+    console.log('Users POST route');
     const { email, firstName, lastName, hash, isAuthor } = req.body;
-    console.log(user);
-    res.json('Users POST Route');
+    let result = await queries.createNewUser(email, firstName, lastName, hash, !!isAuthor);
+    res.json(result);
   }
 ]
