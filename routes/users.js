@@ -9,4 +9,6 @@ router.get('/:userId', controller.specificUserGetRoute);
 
 router.post('/', controller.usersPostRoute);
 
+router.delete('/:userId', controller.deleteUserRoute);
+
 module.exports = router;

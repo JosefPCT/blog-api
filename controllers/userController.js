@@ -1,5 +1,20 @@
 const queries = require('../lib/queries.js');
 
+// Handler for POST '/users'
+// Creates a user based on sent information via JSON
+// TODO:
+// Need to validate information sent
+// Check if sent email value already exists in the DB
+// Return proper status and message
+module.exports.usersPostRoute = [
+  async(req, res) => {
+    console.log('Users POST route');
+    const { email, firstName, lastName, hash, isAuthor } = req.body;
+    let result = await queries.createNewUser(email, firstName, lastName, hash, !!isAuthor);
+    res.json(result);
+  }
+]
+
 // Handler for GET '/users'
 // Returns all users 
 module.exports.usersGetRoute = [
@@ -25,17 +40,14 @@ module.exports.specificUserGetRoute = [
   }    
 ]
 
-// Handler for POST '/users'
-// Creates a user based on sent information via JSON
-// TODO:
-// Need to validate information sent
-// Check if sent email value already exists in the DB
-// Return proper status and message
-module.exports.usersPostRoute = [
+// Handler for DELETE '/users/:userId'
+// Delete a user specified by the :userId param, should return an error message
+module.exports.deleteUserRoute = [
   async(req, res) => {
-    console.log('Users POST route');
-    const { email, firstName, lastName, hash, isAuthor } = req.body;
-    let result = await queries.createNewUser(email, firstName, lastName, hash, !!isAuthor);
+    console.log('/users/:userId DELETE Route');
+    const { userId } = req.params;
+    let result = await queries.deleteUserById(parseInt(userId));
+    console.log('Delete user', result);
     res.json(result);
   }
 ]
