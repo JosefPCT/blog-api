@@ -41,7 +41,7 @@ module.exports.specificUserGetRoute = [
 ]
 
 // Handler for PUT/PATCH '/users/:userId' 
-// Updata a user record specified by the :userId params
+// Update a user record specified by the :userId params
 module.exports.updateUserRoute = [
   async(req, res) => {
     console.log('users/:userId PUT/PATCH Route');
@@ -49,10 +49,6 @@ module.exports.updateUserRoute = [
     // const { email, firstName, lastName, hash, isAuthor } = req.body;
     const detailsArr = [ "email", "firstName", "lastName", "hash", "isAuthor"];
     const data = {};
-    
-    // Object.entries(req.body).forEach(([key, value]) => {
-    //   console.log(`${key}: ${value}`);
-    // });
 
     Object.entries(req.body).forEach(([key, value]) => {
       if(detailsArr.includes(key)){
