@@ -10,7 +10,7 @@ module.exports.usersPostRoute = [
   async(req, res) => {
     console.log('Users POST route');
     const { email, firstName, lastName, hash, isAuthor } = req.body;
-    let result = await queries.createNewUser(email, firstName, lastName, hash, !!isAuthor);
+    let result = await queries.createNewUser(email, firstName, lastName, hash, isAuthor);
     res.json(result);
   }
 ]
