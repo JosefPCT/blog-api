@@ -40,6 +40,32 @@ module.exports.specificUserGetRoute = [
   }    
 ]
 
+// Handler for PUT/PATCH '/users/:userId' 
+// Updata a user record specified by the :userId params
+module.exports.updateUserRoute = [
+  async(req, res) => {
+    console.log('users/:userId PUT/PATCH Route');
+    const { userId } = req.params;
+    // const { email, firstName, lastName, hash, isAuthor } = req.body;
+    const detailsArr = [ "email", "firstName", "lastName", "hash", "isAuthor"];
+    const data = {};
+    
+    // Object.entries(req.body).forEach(([key, value]) => {
+    //   console.log(`${key}: ${value}`);
+    // });
+
+    Object.entries(req.body).forEach(([key, value]) => {
+      if(detailsArr.includes(key)){
+        // console.log(`${key}: ${value}`);
+        data[`${key}`] = value;
+      }
+    });
+    let result = await queries.updateUserById(parseInt(userId), data);
+
+    res.json(result);
+  }
+]
+
 // Handler for DELETE '/users/:userId'
 // Delete a user specified by the :userId param, should return an error message
 module.exports.deleteUserRoute = [
