@@ -26,9 +26,10 @@ app.get('/', (req, res) => {
 });
 
 // Local Passport Strategy import and declaration
-require('./lib/strategies/passportlocal.js');
+// JWT Passport Strategy import and declaration
+const localStrat = require('./lib/strategies/passportlocal.js');
 const jwtStrat = require('./lib/strategies/jwt.js');
-
+passport.use(localStrat);
 passport.use(jwtStrat);
 
 // Testing Passport Authentication and JWT token
