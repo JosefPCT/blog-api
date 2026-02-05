@@ -26,23 +26,32 @@ app.get('/', (req, res) => {
 });
 
 // Local Passport Strategy import and declaration
-require('./lib/passportlocal.js');
+require('./lib/strategies/passportlocal.js');
+const jwtStrat = require('./lib/strategies/jwt.js');
 
-// Testing Passport Authentication
+passport.use(jwtStrat);
+
+// Testing Passport Authentication and JWT token
 
 app.post('/login', passport.authenticate('local', { session: false, 
   failureRedirect: '/login-failure' }), 
   (req,res) => {
+  const user = req.user;
   const token = jwt.sign(
-    { user: req.user }, 
+    { sub: user.id, email: user.email }, 
     process.env.JWT_SECRET, 
     { algorithm: 'HS256',
       expiresIn: "1h"
     });
   return res.status(200).json({
     message: "Authorization granted",
+    user,
     token
   })
+});
+
+app.get('/protected', passport.authenticate("jwt", { session: false }), async(req, res) => {
+  return res.status(200).send('This is a protected route');
 });
 
 
