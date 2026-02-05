@@ -11,8 +11,11 @@ const app = express();
 // Routing
 const routes = require('./routes');
 
-// Testing
+// Passport stuff
 const passport = require('passport');
+
+// Testing: Login route
+const jwt = require('jsonwebtoken');
 
 // Makes data payload's body available in `req.body` object
 app.use(express.json());
@@ -27,8 +30,19 @@ require('./lib/passportlocal.js');
 
 // Testing Passport Authentication
 
-app.post('/login', passport.authenticate('local', { session: false, failureRedirect: '/login-failure' }), (req,res) => {
-  res.send(req.user);
+app.post('/login', passport.authenticate('local', { session: false, 
+  failureRedirect: '/login-failure' }), 
+  (req,res) => {
+  const token = jwt.sign(
+    { user: req.user }, 
+    process.env.JWT_SECRET, 
+    { algorithm: 'HS256',
+      expiresIn: "1h"
+    });
+  return res.status(200).json({
+    message: "Authorization granted",
+    token
+  })
 });
 
 
