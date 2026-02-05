@@ -1,4 +1,5 @@
 const queries = require('../lib/queries.js');
+const utils = require('../lib/utils/passwordUtils.js');
 
 // Handler for POST '/users'
 // Creates a user based on sent information via JSON
@@ -9,7 +10,10 @@ const queries = require('../lib/queries.js');
 module.exports.usersPostRoute = [
   async(req, res) => {
     console.log('Users POST route');
-    const { email, firstName, lastName, hash, isAuthor } = req.body;
+    const { email, password, firstName, lastName, isAuthor } = req.body;
+
+    let hash = await utils.generatePassword(password);
+
     let result = await queries.createNewUser(email, firstName, lastName, hash, isAuthor);
     res.json(result);
   }
