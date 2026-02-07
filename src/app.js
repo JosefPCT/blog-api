@@ -8,8 +8,9 @@ const express = require('express');
 const PORT = process.env.PORT || 3000;
 const app = express();
 
-// Routing
-const routes = require('../routes/index.js');
+// Route files
+// const routes = require('../routes/index.js');
+const usersRoutes = require('./modules/users/user-route.js');
 
 // Passport stuff
 const passport = require('passport');
@@ -21,16 +22,17 @@ const jwt = require('jsonwebtoken');
 app.use(express.json());
 // app.use(express.urlencoded({ extended: true }));
 
-app.get('/', (req, res) => {
-  res.send('Homepage');
-});
-
 // Local Passport Strategy import and declaration
 // JWT Passport Strategy import and declaration
 const localStrat = require('./config/strategies/passportlocal.js');
 const jwtStrat = require('./config/strategies/jwt.js');
 passport.use(localStrat);
 passport.use(jwtStrat);
+
+// Defining Routes
+
+app.use('/api/users', usersRoutes);
+// app.use('/posts', routes.postsRoutes);
 
 // Testing Passport Authentication and JWT token
 // Uses passport's authenticate method with local to validate inputted username and password
@@ -40,7 +42,7 @@ passport.use(jwtStrat);
 // An options object 
 // Then send user information with the token to the client
 // TODO: might need to remove some sensitive information on the user object (i.e password/hash) 
-app.post('/login', passport.authenticate('local', { session: false, 
+app.post('/api/login', passport.authenticate('local', { session: false, 
   failureRedirect: '/login-failure' }), 
   (req,res) => {
   const user = req.user;
@@ -60,13 +62,12 @@ app.post('/login', passport.authenticate('local', { session: false,
 // Test Route to test protecting of routes
 // Uses the authenticate method of passport with `jwt` strategy to verify the token sent by the client
 // Will fail to authorize if token is not validated
-app.get('/protected', passport.authenticate("jwt", { session: false }), async(req, res) => {
+app.get('/api/protected', passport.authenticate("jwt", { session: false }), async(req, res) => {
   return res.status(200).send('This is a protected route');
 });
 
 
-app.use('/users', routes.usersRoutes);
-app.use('/posts', routes.postsRoutes);
+
 
 app.listen(PORT, () => {
   console.log(`Now listening to port:`, PORT);

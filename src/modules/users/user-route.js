@@ -2,7 +2,7 @@ const { Router } = require('express');
 
 const router = Router();
 
-const controller = require('./userController.js');
+const controller = require('./user-controller.js');
 
 router.get('/', controller.usersGetRoute);
 router.get('/:userId', controller.specificUserGetRoute);
