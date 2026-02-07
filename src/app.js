@@ -9,8 +9,8 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 
 // Route files
-// const routes = require('../routes/index.js');
-const usersRoutes = require('./modules/users/user-route.js');
+const routes = require('./api/v1/routes.js');
+// const usersRoutes = require('./modules/users/user-route.js');
 
 // Passport stuff
 const passport = require('passport');
@@ -31,7 +31,7 @@ passport.use(jwtStrat);
 
 // Defining Routes
 
-app.use('/api/users', usersRoutes);
+app.use('/api/users', routes.usersRoutes);
 // app.use('/posts', routes.postsRoutes);
 
 // Testing Passport Authentication and JWT token
