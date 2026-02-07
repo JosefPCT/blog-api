@@ -2,8 +2,8 @@
 // Use to validate login credentials via email and password  
 // const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const prisma = require('../prisma.js');
-const utils = require('../../utils/passwordUtils.js');
+const prisma = require('./prisma.js');
+const utils = require('../utils/passwordUtils.js');
 
 // Options object to pass creating the strategy
 const opts = {

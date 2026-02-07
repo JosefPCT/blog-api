@@ -3,7 +3,7 @@
 require('dotenv').config();
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
-const queries = require('../queries.js');
+const userQueries = require('../modules/users/user-queries.js');
 
 // Options object
 const opts = {
@@ -14,7 +14,7 @@ const opts = {
 // Gets the id from the payload from sub/id and checks if user exists
 module.exports = new JwtStrategy(opts, async(jwt_payload, done) => {
   try {
-    const user = await queries.getUserById(jwt_payload.sub);
+    const user = await userQueries.getUserById(jwt_payload.sub);
     if(user){
       return done(null, user);
     } else {

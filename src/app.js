@@ -23,8 +23,8 @@ app.use(express.json());
 
 // Local Passport Strategy import and declaration
 // JWT Passport Strategy import and declaration
-const localStrat = require('./config/strategies/passportlocal.js');
-const jwtStrat = require('./config/strategies/jwt.js');
+const localStrat = require('./config/passport-local-strategy.js');
+const jwtStrat = require('./config/jwt-strategy.js');
 passport.use(localStrat);
 passport.use(jwtStrat);
 

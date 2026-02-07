@@ -1,4 +1,4 @@
-const queries = require('../../config/queries.js');
+const queries = require('./user-queries.js');
 const utils = require('../../utils/passwordUtils.js');
 
 // Handler for POST '/users'
