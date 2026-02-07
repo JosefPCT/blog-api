@@ -1,57 +1,87 @@
 const prisma = require("../../config/prisma.js");
 
-
 // CREATE
 
 // Create user in the User model, email is a required value, other values has default values
-module.exports.createNewUser = async(email, firstName='Test', lastName='User', hash='hashplaceholderax123', isAuthor=false) => {
-  const user = await prisma.user.create({
-    data: {
+module.exports.createNewUser = async (
+  email,
+  firstName = "Test",
+  lastName = "User",
+  hash = "hashplaceholderax123",
+  isAuthor = false,
+) => {
+  try {
+    const user = await prisma.user.create({
+      data: {
         email,
         firstName,
         lastName,
         hash,
         isAuthor,
-    }
-  }); 
-  return user;
-}
+      },
+    });
+    return user;
+  } catch (error) {
+    console.error("Prisma DB: Error creating new user:", error);
+    throw error;
+  }
+};
 
 // READ
 
 // Returns all users in the User Model
-module.exports.getAllUsers = async() => {
-  return await prisma.user.findMany();
-}
+module.exports.fetchAllUsers = async () => {
+  try {
+    return await prisma.user.findMany();
+  } catch (error) {
+    console.error("Prisma DB: Error getting all users", error);
+    throw error;
+  }
+};
 
 // Return user specified by their id
-module.exports.getUserById = async(id) => {
-  return await prisma.user.findFirst({
-    where: {
-        id: id
-    }
-  })
-}
+module.exports.findUserById = async (id) => {
+  try {
+    return await prisma.user.findFirst({
+      where: {
+        id: id,
+      },
+    });
+  } catch (error) {
+    console.error(`Prisma Database Error: Error in finding a user`, error);
+    throw error;
+  }
+};
 
 // UPDATE
 
-module.exports.updateUserById = async(id, data) => {
-  return await prisma.user.update({
-    where: {
-      id,
-    },
-    data
-  });
-}
+// Finds a user by their id and update it's data
+module.exports.updateUserById = async (id, data) => {
+  try {
+    return await prisma.user.update({
+      where: {
+        id,
+      },
+      data,
+    });
+  } catch (error) {
+    console.error(`Prisma Database Error: Error in updating a user`, error);
+    throw error;
+  }
+};
 
 // DELETE
 
 // Delete a user specified by the id
-module.exports.deleteUserById = async(id) => {
-  return await prisma.user.delete({
-    where: {
-        id: id
-    }
-  })
-}
-
+module.exports.deleteUserById = async (id) => {
+  try {
+    return await prisma.user.delete({
+      where: {
+        id: id,
+      },
+    });
+  } catch (error) {
+    console.error(`Prisma Database Error: Error in deleting a user`, error);
+    throw error;
+  }
+};
