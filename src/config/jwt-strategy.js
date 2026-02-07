@@ -14,7 +14,7 @@ const opts = {
 // Gets the id from the payload from sub/id and checks if user exists
 module.exports = new JwtStrategy(opts, async(jwt_payload, done) => {
   try {
-    const user = await userQueries.getUserById(jwt_payload.sub);
+    const user = await userQueries.findUserById(jwt_payload.sub);
     if(user){
       return done(null, user);
     } else {

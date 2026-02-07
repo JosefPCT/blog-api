@@ -36,7 +36,7 @@ module.exports.getAllUsers = async() => {
 // Return a user specified by their id, returns error message if user is not found in the DB
 module.exports.getUser = async(id) => {
   try {
-    let user = await queries.findUserById(parseInt(userId));
+    let user = await queries.findUserById(parseInt(id));
     return user;
   } catch (error) {
     console.error('Error in userService.getUser: ', error.message);
