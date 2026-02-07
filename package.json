@@ -16,7 +16,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node --watch app.js"
+    "dev": "node --watch src/app.js"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.3.0",
@@ -33,3 +33,4 @@
     "prisma": "^7.3.0"
   }
 }
+
