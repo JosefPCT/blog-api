@@ -10,7 +10,6 @@ const app = express();
 
 // Route files
 const routes = require('./api/v1/routes.js');
-// const usersRoutes = require('./modules/users/user-route.js');
 
 // Passport stuff
 const passport = require('passport');
