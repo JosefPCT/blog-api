@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 
 // Routing
-const routes = require('./routes');
+const routes = require('../routes/index.js');
 
 // Passport stuff
 const passport = require('passport');
@@ -27,8 +27,8 @@ app.get('/', (req, res) => {
 
 // Local Passport Strategy import and declaration
 // JWT Passport Strategy import and declaration
-const localStrat = require('./lib/strategies/passportlocal.js');
-const jwtStrat = require('./lib/strategies/jwt.js');
+const localStrat = require('./config/strategies/passportlocal.js');
+const jwtStrat = require('./config/strategies/jwt.js');
 passport.use(localStrat);
 passport.use(jwtStrat);
 

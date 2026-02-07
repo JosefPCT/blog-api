@@ -1,4 +1,4 @@
-const usersRoutes = require('./users');
+const usersRoutes = require('../src/modules/user/users');
 const postsRoutes = require('./posts');
 
 module.exports = {

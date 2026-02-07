@@ -1,5 +1,5 @@
-const queries = require('../lib/queries.js');
-const utils = require('../lib/utils/passwordUtils.js');
+const queries = require('../../config/queries.js');
+const utils = require('../../utils/passwordUtils.js');
 
 // Handler for POST '/users'
 // Creates a user based on sent information via JSON
