@@ -77,7 +77,6 @@ module.exports.updateUserIdRoute = [
 ]
 
 // Handler for DELETE '/users/:userId'
-// Delete a user specified by the :userId param, should return an error message
 module.exports.deleteUserRoute = [
   async(req, res) => {
     try {
@@ -85,13 +84,9 @@ module.exports.deleteUserRoute = [
       const { userId } = req.params;
       const deletedUser = await userService.deleteUser(userId);
 
-      res.status(200).json(user);
+      res.status(200).json(deletedUser);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
-    const { userId } = req.params;
-    let result = await queries.deleteUserById(parseInt(userId));
-    console.log('Delete user', result);
-    res.json(result);
   }
 ]
