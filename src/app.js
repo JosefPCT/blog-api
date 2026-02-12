@@ -16,6 +16,7 @@ const routes = require('./api/v1/routes.js');
 const passport = require('passport');
 
 // Custom Middlewares
+const { notFoundErrorHandler } = require('./middleware/notFoundErrorHandler.js');
 const { globalErrorHandler } = require('./middleware/globalErrorHandler.js');
 
 // Main App Logic
@@ -28,6 +29,7 @@ app.use(express.json());
 // JWT Passport Strategy import and declaration
 const localStrat = require('./config/passport-local-strategy.js');
 const jwtStrat = require('./config/jwt-strategy.js');
+
 passport.use(localStrat);
 passport.use(jwtStrat);
 
@@ -36,8 +38,9 @@ passport.use(jwtStrat);
 app.use('/api/users', routes.usersRoutes);
 app.use('/api/auth', routes.authRoutes);
 
-
-// Global Error Handler
+// Not Found Error Middleware
+app.use(notFoundErrorHandler);
+// Global Error Middleware
 app.use(globalErrorHandler);
 
 app.listen(PORT, () => {
