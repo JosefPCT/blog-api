@@ -37,21 +37,20 @@ module.exports.usersGetRoute = [
 // Handler for GET '/users/:userId'
 module.exports.userIdGetRoute = [
   async (req, res) => {
-    try {
-      console.log('users/:userId GET Route');
-      const { userId } = req.params;
+    console.log('users/:userId GET Route');
+    const { userId } = req.params;
 
-      let user = await userService.getUser(userId);
+    let user = await userService.getUser(userId);
 
-      if(!user){
-        return res.status(404).json({ error: 'User does not exist'});
-      }
+    // if(!user){
+    //   // return res.status(404).json({ error: 'User does not exist'});
+    //   throw new customErrorType.BadRequest('User not found');
+    // }
 
-      res.status(200).json(user);
+    res.status(200).json(user);
 
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
+
+    // res.status(500).json({ message: error.message });
   }    
 ]
 

@@ -1,5 +1,6 @@
 const queries = require('./user-queries.js');
 const utils = require('../../utils/passwordUtils.js');
+const customErrorType = require('../../utils/extended-errors.js');
 
 // Creates a user based on sent parameters
 // TODO:
@@ -37,6 +38,9 @@ module.exports.getAllUsers = async() => {
 module.exports.getUser = async(id) => {
   try {
     let user = await queries.findUserById(parseInt(id));
+    if(!user){
+      throw new customErrorType.NotFound(`User with id: ${id} not found`);
+    }
     return user;
   } catch (error) {
     console.error('Error in userService.getUser: ', error.message);
