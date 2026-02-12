@@ -36,16 +36,16 @@ module.exports.getAllUsers = async() => {
 // Fetch and return a user and their data
 // Return a user specified by their id, returns error message if user is not found in the DB
 module.exports.getUser = async(id) => {
-  try {
+  // try {
     let user = await queries.findUserById(parseInt(id));
     if(!user){
       throw new customErrorType.NotFound(`User with id: ${id} not found`);
     }
     return user;
-  } catch (error) {
-    console.error('Error in userService.getUser: ', error.message);
-    throw error;
-  }
+  // } catch (error) {
+    // console.error('Error in userService.getUser: ', error.message);
+    // throw error;
+  // }
 }
 
 // Update a user record specified by the :userId params
