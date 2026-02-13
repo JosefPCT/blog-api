@@ -19,7 +19,7 @@ module.exports.getAllPosts = [
 // Handler for GET `/posts/:id` route
 module.exports.getPostById = [
   async(req, res) => {
-    console.log(`'/posts/:id' GET route handler`);
+    console.log(`'/posts/:postId' GET route handler`);
     res.status(200).json('GET');
   }
 ]
@@ -27,7 +27,7 @@ module.exports.getPostById = [
 // Handler for PUT `/posts/:id` route
 module.exports.updatePostById = [
   async(req, res) => {
-    console.log(`'/posts/:id' PUT route handler`);
+    console.log(`'/posts/:postId' PUT route handler`);
     res.status(200).json('PUT');
   }
 ]
@@ -35,7 +35,7 @@ module.exports.updatePostById = [
 // Handler for DELETE `/posts/:id` route
 module.exports.deletePostById = [
   async(req, res) => {
-    console.log(`'/posts/:id' DELETE route handler`);
+    console.log(`'/posts/:postId' DELETE route handler`);
     res.status(200).json('DELETE');
   }
 ]

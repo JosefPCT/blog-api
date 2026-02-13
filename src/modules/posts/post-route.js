@@ -7,10 +7,10 @@ const controller = require('./post-controller.js');
 router.post('/', controller.createPost);
 
 router.get('/', controller.getAllPosts);
-router.get('/:id', controller.getPostById);
+router.get('/:postId', controller.getPostById);
 
-router.put('/:id', controller.updatePostById);
+router.put('/:postId', controller.updatePostById);
 
-router.delete('/:id', controller.deletePostById);
+router.delete('/:postId', controller.deletePostById);
 
 module.exports = router;
