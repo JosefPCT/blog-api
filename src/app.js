@@ -10,7 +10,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Route files import
-const routes = require('./api/v1/routes.js');
+const apiRouter = require('./api/v1/routes.js');
 
 // Passport stuff
 const passport = require('passport');
@@ -34,9 +34,7 @@ passport.use(localStrat);
 passport.use(jwtStrat);
 
 // Defining Routes
-
-app.use('/api/users', routes.usersRoutes);
-app.use('/api/auth', routes.authRoutes);
+app.use('/api/v1', apiRouter);
 
 // Not Found Error Middleware
 app.use(notFoundErrorHandler);
