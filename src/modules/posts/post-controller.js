@@ -16,26 +16,29 @@ module.exports.getAllPosts = [
   }
 ]
 
-// Handler for GET `/posts/:id` route
+// Handler for GET `/posts/:postId` route
 module.exports.getPostById = [
   async(req, res) => {
     console.log(`'/posts/:postId' GET route handler`);
-    res.status(200).json('GET');
+    console.log(`:postId is ${req.params.postId}`);
+    res.status(200).json(`GET, :postId is ${req.params.postId}`);
   }
 ]
 
-// Handler for PUT `/posts/:id` route
+// Handler for PUT `/posts/:postId` route
 module.exports.updatePostById = [
   async(req, res) => {
     console.log(`'/posts/:postId' PUT route handler`);
-    res.status(200).json('PUT');
+    console.log(`:postId is ${req.params.postId}`);
+    res.status(200).json(`PUT, :postId is ${req.params.postId}`);
   }
 ]
 
-// Handler for DELETE `/posts/:id` route
+// Handler for DELETE `/posts/:postId` route
 module.exports.deletePostById = [
   async(req, res) => {
     console.log(`'/posts/:postId' DELETE route handler`);
-    res.status(200).json('DELETE');
+    console.log(`:postId is ${req.params.postId}`);
+    res.status(200).json(`DELETE, :postId is ${req.params.postId}`);
   }
 ]
