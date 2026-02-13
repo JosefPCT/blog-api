@@ -7,79 +7,68 @@ const customErrorType = require('../../utils/extended-errors.js');
 // Need to validate information sent
 // Check if sent email value already exists in the DB
 module.exports.register = async(email, password, firstName, lastName, isAuthor) => {
-  try {
-    let hash = await utils.generatePassword(password);
-    let result = await queries.createNewUser(email, firstName, lastName, hash, isAuthor);
-    return result;
-  } catch (error) {
-    console.error('Error in userService.register: ', error.message);
-    throw error;
+  let hash = await utils.generatePassword(password);
+  let result = await queries.createNewUser(email, firstName, lastName, hash, isAuthor);
+  if(!result){
+    throw new customErrorType.BadRequest(`User not created`);
   }
+  return result;
+
 }
 
 // Returns all users 
 module.exports.getAllUsers = async() => {
-  try {
-    let users = await queries.fetchAllUsers();
+  let users = await queries.fetchAllUsers();
 
-    if(!users){
-      throw new Error('No users in the Database');
-    }
-
-    return users;
-  } catch (error) {
-    console.error('Error in userService.getAllUsers: ', error.message);
-    throw error;
+  if(!users){
+    throw new customErrorType.NotFound('No users in the database');
   }
+
+  return users;
 }
 
 // Fetch and return a user and their data
 // Return a user specified by their id, returns error message if user is not found in the DB
 module.exports.getUser = async(id) => {
-  // try {
-    let user = await queries.findUserById(parseInt(id));
-    if(!user){
-      throw new customErrorType.NotFound(`User with id: ${id} not found`);
-    }
-    return user;
-  // } catch (error) {
-    // console.error('Error in userService.getUser: ', error.message);
-    // throw error;
-  // }
+  let user = await queries.findUserById(parseInt(id));
+
+  if(!user){
+    throw new customErrorType.NotFound(`User with id: ${id} not found`);
+  }
+
+  return user;
 }
 
 // Update a user record specified by the :userId params
 // Creates filtered data and sent to the query function to update
 // Filters data by checking if req.body includes valid fieldnames and ignores if not valid fieldname, accounts for if req.body have missing valid fieldname
 module.exports.updateUserData = async(userId, data) => {
-  try {
-    const detailsArr = [ "email", "firstName", "lastName", "hash", "isAuthor"];
-    const filteredData = {};
+  const detailsArr = [ "email", "firstName", "lastName", "hash", "isAuthor"];
+  const filteredData = {};
 
-    Object.entries(data).forEach(([key, value]) => {
-      if(detailsArr.includes(key)){
-        // console.log(`${key}: ${value}`);
-        filteredData[`${key}`] = value;
-      }
-    });
+  Object.entries(data).forEach(([key, value]) => {
+    if(detailsArr.includes(key)){
+      // console.log(`${key}: ${value}`);
+      filteredData[`${key}`] = value;
+    }
+  });
 
-    const user = await queries.updateUserById(parseInt(userId), filteredData);
+  const user = await queries.updateUserById(parseInt(userId), filteredData);
 
-    return user;
-
-  } catch (error) {
-    console.error('Error in userService.updateUserData: ', error.message);
-    throw error;
+  if(!user){
+    throw new customErrorType.NotFound(`User with id: ${userId} not found, updating data not succesful`);
   }
+
+  return user;
 }
 
 // Delete a user specified by the :userId param, should return an error message
 module.exports.deleteUser = async(userId) => {
-  try {
-    let deletedUser = await queries.deleteUserById(parseInt(userId));
-    return deletedUser;
-  } catch (error) {
-    console.error('Error in userService.deleteUser: ', error.message);
-    throw error;
+  let deletedUser = await queries.deleteUserById(parseInt(userId));
+
+  if(!deletedUser){
+    throw new customErrorType.NotFound(`User with id: ${userId} not found, deleting data unsuccesful`);
   }
+
+  return deletedUser;
 }

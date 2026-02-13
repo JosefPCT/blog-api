@@ -5,32 +5,22 @@ const userService = require('./user-service.js');
 // Handler for POST '/users'
 module.exports.usersPostRoute = [
   async(req, res) => {
-    try {
-      console.log('Users POST route');
-      const { email, password, firstName, lastName, isAuthor } = req.body;
+    console.log('Users POST route');
+    const { email, password, firstName, lastName, isAuthor } = req.body;
 
-      const newUser = await userService.register(email, password, firstName, lastName, isAuthor);
+    const newUser = await userService.register(email, password, firstName, lastName, isAuthor);
 
-      res.status(201).json(newUser);
-
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
+    res.status(201).json(newUser);
   }
 ]
 
 // Handler for GET '/users'
 module.exports.usersGetRoute = [
   async (req, res) => {
-    try {
-      console.log('Users GET Route');
-      let users = await userService.getAllUsers();
+    console.log('Users GET Route');
+    let users = await userService.getAllUsers();
 
-      res.status(201).json(users);
-
-    } catch (error) {
-      res.status(500).json({ message: error.message})
-    }
+    res.status(201).json(users);
   }
 ]
 
@@ -41,51 +31,32 @@ module.exports.userIdGetRoute = [
     const { userId } = req.params;
 
     let user = await userService.getUser(userId);
-
-    // if(!user){
-    //   // return res.status(404).json({ error: 'User does not exist'});
-    //   throw new customErrorType.BadRequest('User not found');
-    // }
-
     res.status(200).json(user);
-
-
-    // res.status(500).json({ message: error.message });
   }    
 ]
 
 // Handler for PUT/PATCH '/users/:userId' 
 module.exports.updateUserIdRoute = [
   async(req, res) => {
-    try {
-      console.log('users/:userId PUT/PATCH Route');
-      const { userId } = req.params;
+    console.log('users/:userId PUT/PATCH Route');
+    const { userId } = req.params;
+    const user = await userService.updateUserData(userId, req.body);
 
-      const user = await userService.updateUserData(userId, req.body);
+    // if(!user){
+    //   return res.status(404).json({ error: 'User did not exist, user data not updated'});
+    // }
 
-      if(!user){
-        return res.status(404).json({ error: 'User did not exist, user data not updated'});
-      }
-
-      res.status(201).json(user);
-
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
+    res.status(201).json(user);
   }
 ]
 
 // Handler for DELETE '/users/:userId'
 module.exports.deleteUserRoute = [
   async(req, res) => {
-    try {
-      console.log('/users/:userId DELETE Route');
-      const { userId } = req.params;
-      const deletedUser = await userService.deleteUser(userId);
+    console.log('/users/:userId DELETE Route');
+    const { userId } = req.params;
+    const deletedUser = await userService.deleteUser(userId);
 
-      res.status(200).json(deletedUser);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
+    res.status(200).json(deletedUser);
   }
 ]
