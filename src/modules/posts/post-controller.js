@@ -8,7 +8,7 @@ module.exports.createPost = [
     console.log('`/posts` POST route handler');
     const createdPost = await postsService.createPost(req.body, req.user);
     console.log('Created Post:', createdPost);
-    res.status(200).json('POST');
+    res.status(200).json(createdPost);
   }
 ]
 
