@@ -31,6 +31,8 @@ module.exports.loginPostRoute = [
 module.exports.testGetRoute = [
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    return res.status(200).send("This is a protected route");
+    console.dir(`Current user:`, req.user);
+    // return res.status(200).send("This is a protected route");
+    return res.status(200).json({ message: 'Protected route Test route', user: req.user})
   },
 ];
