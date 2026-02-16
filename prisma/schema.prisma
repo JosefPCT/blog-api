@@ -13,11 +13,25 @@ datasource db {
   provider = "postgresql"
 }
 
-model User{
-  id  Int  @id @default(autoincrement())
-  email  String  @unique
-  hash  String
-  firstName  String
+model User {
+  id        Int     @id @default(autoincrement())
+  email     String  @unique
+  hash      String
+  firstName String
   lastName  String
   isAuthor  Boolean
+  posts     Post[]
 }
+
+model Post {
+  id          Int       @id @default(autoincrement())
+  publicId    String    @unique @default(uuid()) @db.Uuid
+  title       String
+  text        String
+  isPublished Boolean
+  createdAt   DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime? @updatedAt @db.Timestamptz(6)
+  authorId    Int
+  author      User      @relation(fields: [authorId], references: [id])
+}
+
