@@ -1,9 +1,13 @@
 const postsService = require('./post-service.js');
+const passport = require("passport");
 
 // Handler for POST `/posts` route
 module.exports.createPost = [
+  passport.authenticate("jwt", { session: false }),
   async(req, res) => {
     console.log('`/posts` POST route handler');
+    const createdPost = await postsService.createPost(req.body, req.user);
+    console.log('Created Post:', createdPost);
     res.status(200).json('POST');
   }
 ]
