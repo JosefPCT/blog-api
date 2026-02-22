@@ -69,6 +69,11 @@ module.exports.deletePostById = [
   async(req, res) => {
     console.log(`'/posts/:postId' DELETE route handler`);
     console.log(`:postId is ${req.params.postId}`);
-    res.status(200).json(`DELETE, :postId is ${req.params.postId}`);
+    const { postId } = req.params;
+    const deletedPost = await postsService.deleteSpecificPost(postId);
+    if(!deletedPost){
+      return res.status(404).json({ error: 'Post did not exist, deleting unsuccessful'});
+    }
+    res.status(200).json(deletedPost);
   }
 ]

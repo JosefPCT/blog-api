@@ -52,3 +52,16 @@ module.exports.updatePostById = async (id, data) => {
     throw error;
   }
 };
+
+module.exports.deletePostById = async (id) => {
+  try {
+    return await prisma.post.delete({
+      where: {
+        id: id,
+      },
+    });
+  } catch (error) {
+    console.error(`Prisma Database Error: Error in deleting a user`, error);
+    throw error;
+  }
+};

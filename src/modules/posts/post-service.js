@@ -50,3 +50,12 @@ module.exports.updateSpecificPost = async(postId, data) => {
   
   return post;
 }
+
+module.exports.deleteSpecificPost = async(postId) => {
+  const post = await queries.findPostById(parseInt(postId));
+  if(!post){
+    throw new customErrorType.NotFound(`Post with id: ${postId} not found, deleting post unsuccessful`);
+  }
+  const deletedPost = await queries.deletePostById(parseInt(postId));
+  return deletedPost;
+}
