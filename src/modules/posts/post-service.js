@@ -15,3 +15,11 @@ module.exports.createPost = async(data, userData) => {
 
   return user;
 }
+
+module.exports.fetchAllPosts = async() => {
+  const posts = await queries.findAllPosts()
+  if(!posts){
+    throw new customErrorType.BadRequest(`No posts found`)
+  }
+  return posts;
+}

@@ -1,8 +1,9 @@
-const postsService = require('./post-service.js');
+
 const passport = require("passport");
 const { validationResult, matchedData} = require('express-validator')
 
 const validationMiddleware = require('../../middleware/validation.js')
+const postsService = require('./post-service.js');
 
 // Handler for POST `/posts` route
 module.exports.createPost = [
@@ -24,7 +25,8 @@ module.exports.createPost = [
 module.exports.getAllPosts = [
   async(req, res) => {
     console.log(`'/posts' GET route handler`);
-    res.status(200).json('GET');
+    const posts = await postsService.fetchAllPosts();
+    res.status(200).json(posts);
   }
 ]
 
