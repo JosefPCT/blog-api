@@ -35,7 +35,9 @@ module.exports.getPostById = [
   async(req, res) => {
     console.log(`'/posts/:postId' GET route handler`);
     console.log(`:postId is ${req.params.postId}`);
-    res.status(200).json(`GET, :postId is ${req.params.postId}`);
+    const { postId } = req.params;
+    const post = await postsService.fetchSpecificPost(postId);
+    res.status(200).json(post);
   }
 ]
 

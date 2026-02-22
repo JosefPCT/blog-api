@@ -19,7 +19,15 @@ module.exports.createPost = async(data, userData) => {
 module.exports.fetchAllPosts = async() => {
   const posts = await queries.findAllPosts()
   if(!posts){
-    throw new customErrorType.BadRequest(`No posts found`)
+    throw new customErrorType.BadRequest(`No posts found`);
   }
   return posts;
+}
+
+module.exports.fetchSpecificPost = async(postId) => {
+  const post = await queries.findPostById(parseInt(postId));
+  if(!post){
+    throw new customErrorType.BadRequest(`No post found by that id`);
+  }
+  return post;
 }

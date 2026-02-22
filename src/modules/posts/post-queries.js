@@ -25,3 +25,16 @@ module.exports.findAllPosts = async() => {
     throw error;
   }
 }
+
+module.exports.findPostById = async(id) => {
+  try {
+    return await prisma.post.findFirst({
+      where: {
+        id: id,
+      },
+    });
+  } catch (error) {
+    console.error("Prisma Error in creating a new post ", error);
+    throw error;
+  }
+}
