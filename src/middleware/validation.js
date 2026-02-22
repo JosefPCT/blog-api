@@ -56,3 +56,33 @@ module.exports.validateUpdateUser = [
     .isBoolean().withMessage(`isAuthor field ${booleanErr}`)
     .optional()
 ]
+
+module.exports.validatePost = [
+  body("authorId").trim()
+    .notEmpty().withMessage(`authorId ${emptyErr}`),
+  body("title").trim()
+    .notEmpty().withMessage(`title ${emptyErr}`)
+    .isLength({ min: 1 , max: 60}).withMessage(`title length must be between 1-60`),
+  body("text").trim()
+    .notEmpty().withMessage(`text field ${emptyErr}`)
+    .isLength({ max: 40000}).withMessage(`title length must be between 1-60`),
+  body("isPublished")
+    .isBoolean().withMessage(`isPublished field ${booleanErr}`)
+]
+
+module.exports.validateUpdatePost = [
+  body("authorId").trim()
+    .notEmpty().withMessage(`authorId ${emptyErr}`)
+    .optional(),
+  body("title").trim()
+    .notEmpty().withMessage(`title ${emptyErr}`)
+    .isLength({ min: 1 , max: 60}).withMessage(`title length must be between 1-60`)
+    .optional(),
+  body("text").trim()
+    .notEmpty().withMessage(`text field ${emptyErr}`)
+    .isLength({ max: 40000}).withMessage(`title length must be between 1-60`)
+    .optional(),
+  body("isPublished")
+    .isBoolean().withMessage(`isPublished field ${booleanErr}`)
+    .optional()
+]
