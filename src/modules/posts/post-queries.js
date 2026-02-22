@@ -7,7 +7,7 @@ module.exports.createPostByUserId = async(data, userId) => {
       authorId: userId,
       title: data.title,
       text: data.text,
-      isPublished: true
+      isPublished: data.isPublished
     },
   });
     return user

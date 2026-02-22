@@ -1,12 +1,20 @@
 const postsService = require('./post-service.js');
 const passport = require("passport");
+const { validationResult, matchedData} = require('express-validator')
+
+const validationMiddleware = require('../../middleware/validation.js')
 
 // Handler for POST `/posts` route
 module.exports.createPost = [
   passport.authenticate("jwt", { session: false }),
+  validationMiddleware.validatePost,
   async(req, res) => {
     console.log('`/posts` POST route handler');
-    const createdPost = await postsService.createPost(req.body, req.user);
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+      return res.status(400).json(errors);
+    }
+    const createdPost = await postsService.createPost(matchedData(req), req.user);
     console.log('Created Post:', createdPost);
     res.status(200).json(createdPost);
   }
