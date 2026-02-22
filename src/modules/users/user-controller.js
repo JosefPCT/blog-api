@@ -45,14 +45,20 @@ module.exports.userIdGetRoute = [
 
 // Handler for PUT/PATCH '/users/:userId' 
 module.exports.updateUserIdRoute = [
+  validationMiddleware.validateUpdateUser,
   async(req, res) => {
     console.log('users/:userId PUT/PATCH Route');
     const { userId } = req.params;
-    const user = await userService.updateUserData(userId, req.body);
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+      return res.status(400).json(errors);
+    }
+    
+    const user = await userService.updateUserData(userId, matchedData(req));
 
-    // if(!user){
-    //   return res.status(404).json({ error: 'User did not exist, user data not updated'});
-    // }
+    if(!user){
+      return res.status(404).json({ error: 'User did not exist, user data not updated'});
+    }
 
     res.status(201).json(user);
   }
