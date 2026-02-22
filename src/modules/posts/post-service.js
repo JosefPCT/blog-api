@@ -27,7 +27,26 @@ module.exports.fetchAllPosts = async() => {
 module.exports.fetchSpecificPost = async(postId) => {
   const post = await queries.findPostById(parseInt(postId));
   if(!post){
-    throw new customErrorType.BadRequest(`No post found by that id`);
+    throw new customErrorType.NotFound(`No post found by that id`);
   }
+  return post;
+}
+
+module.exports.updateSpecificPost = async(postId, data) => {
+  const fieldsArr = ["title", "text", "isPublished"];
+  const filteredData = {};
+
+  Object.entries(data).forEach(([key, value]) => {
+    if(fieldsArr.includes(key)){
+      // console.log(`${key}: ${value}`);
+      filteredData[`${key}`] = value;
+    }
+  });
+
+  const post = await queries.updatePostById(parseInt(postId), filteredData);
+  if(!post){
+      throw new customErrorType.NotFound(`Post with id: ${postId} not found, updating post data not succesful`);
+  }
+  
   return post;
 }

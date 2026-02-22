@@ -43,10 +43,24 @@ module.exports.getPostById = [
 
 // Handler for PUT `/posts/:postId` route
 module.exports.updatePostById = [
+  passport.authenticate("jwt", { session: false }),
+  validationMiddleware.validateUpdatePost,
   async(req, res) => {
     console.log(`'/posts/:postId' PUT route handler`);
     console.log(`:postId is ${req.params.postId}`);
-    res.status(200).json(`PUT, :postId is ${req.params.postId}`);
+    const { postId } = req.params;
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+      return res.status(400).json(errors);
+    }
+
+    const updatedPost = await postsService.updateSpecificPost(postId, matchedData(req));
+
+    if(!updatedPost){
+      return res.status(404).json({ error: 'Post did not exist, post data not updated'});
+    }
+
+    res.status(200).json(updatedPost);
   }
 ]
 

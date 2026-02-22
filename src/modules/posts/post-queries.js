@@ -38,3 +38,17 @@ module.exports.findPostById = async(id) => {
     throw error;
   }
 }
+
+module.exports.updatePostById = async (id, data) => {
+  try {
+    return await prisma.post.update({
+      where: {
+        id,
+      },
+      data,
+    });
+  } catch (error) {
+    console.error(`Prisma Database Error: Error in updating a user`, error);
+    throw error;
+  }
+};
