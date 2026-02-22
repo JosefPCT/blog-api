@@ -1,12 +1,20 @@
 // const queries = require('./user-queries.js');
 // const utils = require('../../utils/passwordUtils.js');
 const userService = require('./user-service.js');
+const validationMiddleware = require('../../middleware/validation.js');
+
+const { validationResult, matchedData } = require('express-validator');
 
 // Handler for POST '/users'
 module.exports.usersPostRoute = [
+  validationMiddleware.validateUser,
   async(req, res) => {
     console.log('Users POST route');
-    const { email, password, firstName, lastName, isAuthor } = req.body;
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+      return res.status(400).json(errors);
+    }
+    const { email, password, firstName, lastName, isAuthor } = matchedData(req);
 
     const newUser = await userService.register(email, password, firstName, lastName, isAuthor);
 

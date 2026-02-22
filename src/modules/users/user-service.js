@@ -7,6 +7,10 @@ const customErrorType = require('../../utils/extended-errors.js');
 // Need to validate information sent
 // Check if sent email value already exists in the DB
 module.exports.register = async(email, password, firstName, lastName, isAuthor) => {
+  let existingEmail = await queries.findUserByEmail(email);
+  if(existingEmail){
+    throw new Error(`Email already exists`);
+  }
   let hash = await utils.generatePassword(password);
   let result = await queries.createNewUser(email, firstName, lastName, hash, isAuthor);
   if(!result){

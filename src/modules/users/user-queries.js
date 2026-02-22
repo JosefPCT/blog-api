@@ -48,10 +48,24 @@ module.exports.findUserById = async (id) => {
       },
     });
   } catch (error) {
-    console.error(`Prisma Database Error: Error in finding a user`, error);
+    console.error(`Prisma Database Error: Error in finding a user by id`, error);
     throw error;
   }
 };
+
+// Return user specified by their email, use when checking if email already exists
+module.exports.findUserByEmail = async(email) => {
+  try{
+    return await prisma.user.findFirst({
+      where: {
+        email: email,
+      },
+    });
+  } catch (error) {
+    console.error(`Prisma Database Error: Error in finding a user by email`, error);
+    throw error;
+  }
+}
 
 // UPDATE
 
