@@ -3,6 +3,7 @@
 const prisma = require("../../config/prisma.js");
 const queries = require('./post-queries.js');
 const customErrorType = require('../../utils/extended-errors.js');
+const { PrismaClientKnownRequestError } = require("@prisma/client/runtime/client");
 
 // Create a post based on sent data and the current user
 module.exports.createPost = async(data, userData) => {
@@ -29,12 +30,26 @@ module.exports.fetchAllPosts = async() => {
 }
 
 // Return a specific post
-module.exports.fetchSpecificPost = async(postId) => {
-  const post = await queries.findPostById(parseInt(postId));
-  if(!post){
-    throw new customErrorType.NotFound(`No post found by that id`);
+// Handles error handling logic, catches prisma db query errors
+module.exports.fetchSpecificPost = async(publicId) => {
+  try {
+    const post = await queries.findPostById(publicId);
+    console.log("Post", post);
+    if(!post){
+      throw new customErrorType.NotFound(`No post found by that id`);
+    }
+    return post;
+  } catch (error) {
+    console.log("Error log.........");
+    console.log(error);
+    if(error instanceof PrismaClientKnownRequestError){
+      console.log("Prisma Query Error");
+      if(error.code === "P2007"){
+        throw new customErrorType.BadRequest("Database Error, Database validation error");
+      }
+    }
+    throw error;
   }
-  return post;
 }
 
 // Update a specific post based on sent data
@@ -58,11 +73,11 @@ module.exports.updateSpecificPost = async(postId, data) => {
 }
 
 // Delete a specific post based on a dynamic url parameter
-module.exports.deleteSpecificPost = async(postId) => {
-  const post = await queries.findPostById(parseInt(postId));
+module.exports.deleteSpecificPost = async(publicId) => {
+  const post = await queries.findPostById(publicId);
   if(!post){
-    throw new customErrorType.NotFound(`Post with id: ${postId} not found, deleting post unsuccessful`);
+    throw new customErrorType.NotFound(`Post with public id: ${publicId} not found, deleting post unsuccessful`);
   }
-  const deletedPost = await queries.deletePostById(parseInt(postId));
+  const deletedPost = await queries.deletePostById(publicId);
   return deletedPost;
 }

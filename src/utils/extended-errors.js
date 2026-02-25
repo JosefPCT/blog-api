@@ -19,6 +19,8 @@ class NotFound extends GeneralError {
   }
 }
 
+
+
 module.exports = {
   GeneralError,
   BadRequest,

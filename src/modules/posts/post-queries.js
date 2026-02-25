@@ -3,7 +3,7 @@ const prisma = require("../../config/prisma.js");
 // Create a post
 module.exports.createPostByUserId = async(data, userId) => {
   try {
-    const user = await prisma.post.create({
+    const post = await prisma.post.create({
       data: {
       authorId: userId,
       title: data.title,
@@ -11,7 +11,7 @@ module.exports.createPostByUserId = async(data, userId) => {
       isPublished: data.isPublished
     },
   });
-    return user
+    return post
   } catch (error) {
     console.error("Prisma Error in creating a new post ", error);
     throw error;
@@ -29,17 +29,12 @@ module.exports.findAllPosts = async() => {
 }
 
 // Find a specific post by their id
-module.exports.findPostById = async(id) => {
-  try {
+module.exports.findPostById = async(publicId) => {
     return await prisma.post.findFirst({
       where: {
-        id: id,
+        publicId: publicId,
       },
     });
-  } catch (error) {
-    console.error("Prisma Error in creating a new post ", error);
-    throw error;
-  }
 }
 
 // Update a specific post by their id
