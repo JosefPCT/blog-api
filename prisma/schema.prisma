@@ -23,15 +23,18 @@ model User {
   posts     Post[]
 }
 
+// Use @map and @@map options to adhere to naming conventions of snake case in databases and pascalCase and CamelCase in fields and models in prisma
 model Post {
   id          Int       @id @default(autoincrement())
-  publicId    String    @unique @default(uuid()) @db.Uuid
+  publicId    String    @unique @default(uuid()) @db.Uuid @map("public_id")
   title       String
   text        String
-  isPublished Boolean
-  createdAt   DateTime  @default(now()) @db.Timestamptz(6)
-  updatedAt   DateTime? @updatedAt @db.Timestamptz(6)
-  authorId    Int
+  isPublished Boolean   @default(false) @map("is_published")
+  createdAt   DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt   DateTime? @updatedAt @db.Timestamptz(6) @map("updated_at")
+  authorId    Int       @map("author_id")
   author      User      @relation(fields: [authorId], references: [id])
+
+  @@map("posts")
 }
 
