@@ -1,3 +1,5 @@
+// List of Custom Errors
+
 class GeneralError extends Error {
   constructor(message, code) {
     super(message);
