@@ -5,7 +5,7 @@ const emptyErr = `must not be empty`;
 const booleanErr = `must be a boolean value`;
 
 
-// Custom Validation
+// Custom Validators
 
 const isSamePass = (value, { req }) => {
   if(value != req.body.password){

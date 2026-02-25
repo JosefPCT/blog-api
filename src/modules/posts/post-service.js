@@ -1,21 +1,25 @@
+// Has query layer to handle db interactions
+
 const prisma = require("../../config/prisma.js");
 const queries = require('./post-queries.js');
 const customErrorType = require('../../utils/extended-errors.js');
 
+// Create a post based on sent data and the current user
 module.exports.createPost = async(data, userData) => {
   console.log('Create Post (Service Layer)');
   console.log(data);
   console.log(userData);
 
-  const user = await queries.createPostByUserId(data, userData.id);
+  const post = await queries.createPostByUserId(data, userData.id);
 
-  if(!user){
+  if(!post){
     throw new customErrorType.BadRequest(`Error in creating the post`);
   }
 
-  return user;
+  return post;
 }
 
+// Returns all posts results
 module.exports.fetchAllPosts = async() => {
   const posts = await queries.findAllPosts()
   if(!posts){
@@ -24,6 +28,7 @@ module.exports.fetchAllPosts = async() => {
   return posts;
 }
 
+// Return a specific post
 module.exports.fetchSpecificPost = async(postId) => {
   const post = await queries.findPostById(parseInt(postId));
   if(!post){
@@ -32,6 +37,7 @@ module.exports.fetchSpecificPost = async(postId) => {
   return post;
 }
 
+// Update a specific post based on sent data
 module.exports.updateSpecificPost = async(postId, data) => {
   const fieldsArr = ["title", "text", "isPublished"];
   const filteredData = {};
@@ -51,6 +57,7 @@ module.exports.updateSpecificPost = async(postId, data) => {
   return post;
 }
 
+// Delete a specific post based on a dynamic url parameter
 module.exports.deleteSpecificPost = async(postId) => {
   const post = await queries.findPostById(parseInt(postId));
   if(!post){

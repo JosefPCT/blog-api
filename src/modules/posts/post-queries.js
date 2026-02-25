@@ -1,5 +1,6 @@
 const prisma = require("../../config/prisma.js");
 
+// Create a post
 module.exports.createPostByUserId = async(data, userId) => {
   try {
     const user = await prisma.post.create({
@@ -17,6 +18,7 @@ module.exports.createPostByUserId = async(data, userId) => {
   }
 }
 
+// Find all posts
 module.exports.findAllPosts = async() => {
   try {
     return await prisma.post.findMany();
@@ -26,6 +28,7 @@ module.exports.findAllPosts = async() => {
   }
 }
 
+// Find a specific post by their id
 module.exports.findPostById = async(id) => {
   try {
     return await prisma.post.findFirst({
@@ -39,6 +42,7 @@ module.exports.findPostById = async(id) => {
   }
 }
 
+// Update a specific post by their id
 module.exports.updatePostById = async (id, data) => {
   try {
     return await prisma.post.update({
@@ -53,6 +57,7 @@ module.exports.updatePostById = async (id, data) => {
   }
 };
 
+// Delete a specific post by their id
 module.exports.deletePostById = async (id) => {
   try {
     return await prisma.post.delete({

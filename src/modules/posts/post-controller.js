@@ -6,6 +6,7 @@ const validationMiddleware = require('../../middleware/validation.js')
 const postsService = require('./post-service.js');
 
 // Handler for POST `/posts` route
+// Uses middleware to make sure users are authenticated and a middleware to handle validation of inputs
 module.exports.createPost = [
   passport.authenticate("jwt", { session: false }),
   validationMiddleware.validatePost,
@@ -42,6 +43,7 @@ module.exports.getPostById = [
 ]
 
 // Handler for PUT `/posts/:postId` route
+// Uses middleware to make sure users are authenticated and a middleware to handle validation of inputs
 module.exports.updatePostById = [
   passport.authenticate("jwt", { session: false }),
   validationMiddleware.validateUpdatePost,

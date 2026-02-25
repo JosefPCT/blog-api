@@ -11,6 +11,7 @@ const opts = {
   secretOrKey: process.env.JWT_SECRET
 }
 
+// Strategy to be imported to app
 // Gets the id from the payload from sub/id and checks if user exists
 module.exports = new JwtStrategy(opts, async(jwt_payload, done) => {
   try {

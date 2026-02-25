@@ -1,11 +1,11 @@
+// Has a query layer to handle direct db interactions
+
 const queries = require('./user-queries.js');
 const utils = require('../../utils/passwordUtils.js');
 const customErrorType = require('../../utils/extended-errors.js');
 
-// Creates a user based on sent parameters
-// TODO:
-// Need to validate information sent
-// Check if sent email value already exists in the DB
+// Creates a user based on sent data
+// Checks if email sent already exists in the db
 module.exports.register = async(email, password, firstName, lastName, isAuthor) => {
   let existingEmail = await queries.findUserByEmail(email);
   if(existingEmail){
