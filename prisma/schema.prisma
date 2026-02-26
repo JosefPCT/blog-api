@@ -21,20 +21,35 @@ model User {
   lastName  String
   isAuthor  Boolean
   posts     Post[]
+  comments  Comment[]
 }
 
 // Use @map and @@map options to adhere to naming conventions of snake case in databases and pascalCase and CamelCase in fields and models in prisma
 model Post {
   id          Int       @id @default(autoincrement())
-  publicId    String    @unique @default(uuid()) @db.Uuid @map("public_id")
+  publicId    String    @unique @default(uuid()) @map("public_id") @db.Uuid
   title       String
   text        String
   isPublished Boolean   @default(false) @map("is_published")
-  createdAt   DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
-  updatedAt   DateTime? @updatedAt @db.Timestamptz(6) @map("updated_at")
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime? @updatedAt @map("updated_at") @db.Timestamptz(6)
   authorId    Int       @map("author_id")
   author      User      @relation(fields: [authorId], references: [id])
+  comments  Comment[]
 
   @@map("posts")
 }
 
+model Comment {
+  id          Int      @id @default(autoincrement())
+  publicId    String   @unique @default(uuid()) @map("public_id") @db.Uuid
+  text        String
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  commenterId Int      @map("commenter_id")
+  commenter  User  @relation(fields: [commenterId], references: [id])
+  postId  Int  @map("post_id")
+  parent  Post  @relation(fields: [postId], references: [id]) 
+
+  @@map("comments")
+}
