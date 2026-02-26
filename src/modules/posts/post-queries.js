@@ -4,10 +4,10 @@ const prisma = require("../../config/prisma.js");
 module.exports.createPostByUserId = async(data, userId) => {
   const post = await prisma.post.create({
     data: {
-    authorId: userId,
-    title: data.title,
-    text: data.text,
-    isPublished: data.isPublished
+      authorId: userId,
+      title: data.title,
+      text: data.text,
+      isPublished: data.isPublished
   },
 });
   return post

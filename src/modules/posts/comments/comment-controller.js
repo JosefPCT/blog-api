@@ -1,11 +1,19 @@
+const passport = require("passport");
+const { validationResult, matchedData} = require('express-validator')
+
+const validationMiddleware = require('../../../middleware/validation.js')
 const commentsService = require('./comment-service.js');
 
 
 module.exports.createPostComment = [
+  passport.authenticate("jwt", { session: false }),
   async(req, res) => {
     console.log('/posts/:postId/comments POST route handler');
     console.log(`:postId is ${req.params.postId}`);
-    res.status(200).json(`POST a comment, :postId is ${req.params.postId}`);
+    console.log(req.user);
+    const createdComment = await commentsService.createPostComment(req.params.postId, parseInt(req.user.id), req.body);
+    res.status(200).json(createdComment)
+    // res.status(200).json(`POST a comment, :postId is ${req.params.postId}`);
   }
 ]
 
