@@ -11,29 +11,45 @@ module.exports.createPost = async(data, userData) => {
   console.log(data);
   console.log(userData);
 
-  const post = await queries.createPostByUserId(data, userData.id);
-
-  if(!post){
-    throw new customErrorType.BadRequest(`Error in creating the post`);
+  try {
+    const post = await queries.createPostByUserId(data, userData.id);
+  
+    if(!post){
+      throw new customErrorType.BadRequest(`Error in creating the post`);
+    }
+  
+    return post;
+  } catch (error) {
+    console.log(error);
+    if(error instanceof PrismaClientKnownRequestError){
+      throw new customErrorType.GeneralError("Database Error");
+    }
+    throw error;
   }
-
-  return post;
 }
 
 // Returns all posts results
 module.exports.fetchAllPosts = async() => {
-  const posts = await queries.findAllPosts()
-  if(!posts){
-    throw new customErrorType.BadRequest(`No posts found`);
+  try {
+    const posts = await queries.findAllPosts()
+    if(!posts){
+      throw new customErrorType.BadRequest(`No posts found`);
+    }
+    return posts;
+  } catch (error) {
+    console.log(error);
+    if(error instanceof PrismaClientKnownRequestError){
+      throw new customErrorType.GeneralError("Database Error");
+    }
+    throw error;
   }
-  return posts;
 }
 
 // Return a specific post
 // Handles error handling logic, catches prisma db query errors
 module.exports.fetchSpecificPost = async(publicId) => {
   try {
-    const post = await queries.findPostById(publicId);
+    const post = await queries.findPostByPublicId(publicId);
     console.log("Post", post);
     if(!post){
       throw new customErrorType.NotFound(`No post found by that id`);
@@ -44,16 +60,17 @@ module.exports.fetchSpecificPost = async(publicId) => {
     console.log(error);
     if(error instanceof PrismaClientKnownRequestError){
       console.log("Prisma Query Error");
-      if(error.code === "P2007"){
-        throw new customErrorType.BadRequest("Database Error, Database validation error");
-      }
+      throw new customErrorType.GeneralError("Database Error");
+      // if(error.code === "P2007"){
+      //   throw new customErrorType.BadRequest("Database Error, Database validation error");
+      // }
     }
     throw error;
   }
 }
 
 // Update a specific post based on sent data
-module.exports.updateSpecificPost = async(postId, data) => {
+module.exports.updateSpecificPost = async(postPublicId, data) => {
   const fieldsArr = ["title", "text", "isPublished"];
   const filteredData = {};
 
@@ -64,20 +81,36 @@ module.exports.updateSpecificPost = async(postId, data) => {
     }
   });
 
-  const post = await queries.updatePostById(parseInt(postId), filteredData);
-  if(!post){
-      throw new customErrorType.NotFound(`Post with id: ${postId} not found, updating post data not succesful`);
+  try {
+    const postCheck = await queries.findPostByPublicId(postPublicId);
+    if(!postCheck){
+        throw new customErrorType.NotFound(`Post with id: ${postPublicId} not found, updating post data not succesful`);
+    }
+    const updatedPost = await queries.updatePostByPublicId(postPublicId, filteredData);
+    return updatedPost;
+  } catch (error) {
+    console.log(error);
+    if(error instanceof PrismaClientKnownRequestError){
+      throw new customErrorType.GeneralError("Database Error");
+    }
+    throw error;
   }
-  
-  return post;
 }
 
 // Delete a specific post based on a dynamic url parameter
 module.exports.deleteSpecificPost = async(publicId) => {
-  const post = await queries.findPostById(publicId);
-  if(!post){
-    throw new customErrorType.NotFound(`Post with public id: ${publicId} not found, deleting post unsuccessful`);
+  try {
+    const postCheck = await queries.findPostByPublicId(publicId);
+    if(!postCheck){
+      throw new customErrorType.NotFound(`Post with public id: ${publicId} not found, deleting post unsuccessful`);
+    }
+    const deletedPost = await queries.deletePostByPublicId(publicId);
+    return deletedPost;
+  } catch (error) {
+    console.log(error);
+    if(error instanceof PrismaClientKnownRequestError){
+      throw new customErrorType.GeneralError("Database Error");
+    }
+    throw error;
   }
-  const deletedPost = await queries.deletePostById(publicId);
-  return deletedPost;
 }
