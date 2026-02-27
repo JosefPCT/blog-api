@@ -62,6 +62,7 @@ module.exports.deleteSpecificPostComment = [
   async(req, res) => {
     console.log(`'/posts/:postId/comments/:commentId' DELETE route handler`);
     console.log(`:postId is ${req.params.postId}, :commentId is ${req.params.commentId}`);
-    res.status(200).json(`DELETE a specific comment, :postId is ${req.params.postId}, :commentId is ${req.params.commentId}`);
+    const deletedComment = await commentsService.deleteSpecificPostComment(req.params.postId, req.params.commentId);
+    res.status(200).json(deletedComment);
   }
 ]

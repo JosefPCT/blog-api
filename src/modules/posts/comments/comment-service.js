@@ -66,6 +66,9 @@ module.exports.fetchSpecificPostComment = async(publicPostId, publicCommentId) =
   }
 }
 
+// Creates a filtered data object from the `data` object argument passed into it, only accepts fields that can be updated
+// Checks if the post and comment exists in the DB
+// Then call another query to update the comment if no errors
 module.exports.updateSpecificPostComment = async(postPublicId, commentPublicId, data) => {
   const fieldsArr = ["text"];
   const filteredData = {};
@@ -89,6 +92,27 @@ module.exports.updateSpecificPostComment = async(postPublicId, commentPublicId, 
     const updatedComment = await commentQueries.updatePostCommentByPublicId(commentPublicId, post.id, filteredData);
     return updatedComment;
     
+  } catch (error) {
+    console.log(error)
+    if(error instanceof PrismaClientKnownRequestError){
+      throw new customErrors.GeneralError("Database Error");
+    }
+    throw error;
+  }
+}
+
+module.exports.deleteSpecificPostComment = async(postPublicId, commentPublicId) => {
+  try {
+    const post = await postQueries.findPostByPublicId(postPublicId);
+    if(!post){
+      throw new customErrors.NotFound(`No post found by the id of ${postPublicId}`);
+    }
+    const comment = await commentQueries.findPostCommentByPublicId(commentPublicId, post.id);
+    if(!comment){
+      throw new customErrors.NotFound(`No comment with the id of ${commentPublicId}, is found in the post with the id of ${postPublicId}`);
+    }
+    const deletedComment = await commentQueries.deletePostCommentByPublicId(commentPublicId, post.id);
+    return deletedComment;
   } catch (error) {
     console.log(error)
     if(error instanceof PrismaClientKnownRequestError){

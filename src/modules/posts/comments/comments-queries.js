@@ -43,6 +43,7 @@ module.exports.findPostCommentByPublicId = async(commentPublicId, postId) => {
   })
 }
 
+// Update/Edit a specific comment based on the passed comment's public id, post's id, and the filtered data
 module.exports.updatePostCommentByPublicId = async(commentPublicId, postId, data) => {
   return await prisma.comment.update({
     where: {
@@ -50,5 +51,14 @@ module.exports.updatePostCommentByPublicId = async(commentPublicId, postId, data
       postId: postId
     },
     data
+  });
+}
+
+module.exports.deletePostCommentByPublicId = async(commentPublicId, postId, data) => {
+  return await prisma.comment.delete({
+    where: {
+      publicId: commentPublicId,
+      postId: postId
+    }
   });
 }
