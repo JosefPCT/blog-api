@@ -101,6 +101,8 @@ module.exports.updateSpecificPostComment = async(postPublicId, commentPublicId, 
   }
 }
 
+// Checks if the post and comment exists in the DB
+// Then send another query to delete the comment in the post by the comment's public id and the post's id
 module.exports.deleteSpecificPostComment = async(postPublicId, commentPublicId) => {
   try {
     const post = await postQueries.findPostByPublicId(postPublicId);

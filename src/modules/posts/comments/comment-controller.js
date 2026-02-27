@@ -49,6 +49,7 @@ module.exports.updateSpecificPostComment = [
   async(req, res) => {
     console.log(`'/posts/:postId/comments/:commentId' PUT/PATCH route handler`);
     console.log(`:postId is ${req.params.postId}, :commentId is ${req.params.commentId}`);
+    console.log(req.user.id);
     const errors = validationResult(req);
     if(!errors.isEmpty()){
       res.status(400).json(errors)

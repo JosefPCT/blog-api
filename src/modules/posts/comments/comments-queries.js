@@ -54,6 +54,7 @@ module.exports.updatePostCommentByPublicId = async(commentPublicId, postId, data
   });
 }
 
+// Delete a specific comment based on the passed comment's public id and post's id
 module.exports.deletePostCommentByPublicId = async(commentPublicId, postId, data) => {
   return await prisma.comment.delete({
     where: {
