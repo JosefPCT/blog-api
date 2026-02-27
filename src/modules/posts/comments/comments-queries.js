@@ -42,3 +42,13 @@ module.exports.findPostCommentByPublicId = async(commentPublicId, postId) => {
     }
   })
 }
+
+module.exports.updatePostCommentByPublicId = async(commentPublicId, postId, data) => {
+  return await prisma.comment.update({
+    where: {
+      publicId: commentPublicId,
+      postId: postId
+    },
+    data
+  });
+}

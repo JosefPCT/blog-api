@@ -42,11 +42,19 @@ module.exports.getSpecificPostComment = [
   }
 ]
 
+// Route handler for PUT '/post/:postId/comments/:commentId 
 module.exports.updateSpecificPostComment = [
+  passport.authenticate("jwt", { session: false }),
+  validationMiddleware.validateUpdateComment,
   async(req, res) => {
     console.log(`'/posts/:postId/comments/:commentId' PUT/PATCH route handler`);
     console.log(`:postId is ${req.params.postId}, :commentId is ${req.params.commentId}`);
-    res.status(200).json(`UPDATE a specific comment, :postId is ${req.params.postId}, :commentId is ${req.params.commentId}`);
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+      res.status(400).json(errors)
+    }
+    const updatedComment = await commentsService.updateSpecificPostComment(req.params.postId, req.params.commentId, matchedData(req));
+    res.status(200).json(updatedComment);
   }
 ]
 

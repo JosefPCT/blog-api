@@ -65,3 +65,35 @@ module.exports.fetchSpecificPostComment = async(publicPostId, publicCommentId) =
     throw error;
   }
 }
+
+module.exports.updateSpecificPostComment = async(postPublicId, commentPublicId, data) => {
+  const fieldsArr = ["text"];
+  const filteredData = {};
+
+  Object.entries(data).forEach(([key, value]) => {
+    if(fieldsArr.includes(key)){
+      filteredData[`${key}`] = value;
+    }
+  });
+
+  try {
+    const post = await postQueries.findPostByPublicId(postPublicId);
+    if(!post){
+      throw new customErrors.NotFound(`No post found by the id of ${postPublicId}`);
+    }
+    const comment = await commentQueries.findPostCommentByPublicId(commentPublicId, post.id);
+    if(!comment){
+      throw new customErrors.NotFound(`No comment with the id of ${commentPublicId}, is found in the post with the id of ${postPublicId}`);
+    }
+
+    const updatedComment = await commentQueries.updatePostCommentByPublicId(commentPublicId, post.id, filteredData);
+    return updatedComment;
+    
+  } catch (error) {
+    console.log(error)
+    if(error instanceof PrismaClientKnownRequestError){
+      throw new customErrors.GeneralError("Database Error");
+    }
+    throw error;
+  }
+}
