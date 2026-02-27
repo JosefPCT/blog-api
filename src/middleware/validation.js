@@ -15,6 +15,8 @@ const isSamePass = (value, { req }) => {
 }
 
 // Validation
+
+// User
 module.exports.validateUser = [
   body("email").trim()
     .notEmpty().withMessage(`Email field ${emptyErr}`)
@@ -57,6 +59,8 @@ module.exports.validateUpdateUser = [
     .optional()
 ]
 
+// Post
+
 module.exports.validatePost = [
   body("authorId").trim()
     .notEmpty().withMessage(`authorId ${emptyErr}`),
@@ -84,5 +88,20 @@ module.exports.validateUpdatePost = [
     .optional(),
   body("isPublished")
     .isBoolean().withMessage(`isPublished field ${booleanErr}`)
+    .optional()
+]
+
+// Comments 
+
+module.exports.validateCreateComment = [
+  body("text").trim()
+    .notEmpty().withMessage(`Comment text ${emptyErr}`)
+    .isLength({ min: 5, max: 1000}).withMessage(`Comment must have more than 5 letters`)
+]
+
+module.exports.validateUpdateComment = [
+  body("text").trim()
+    .notEmpty().withMessage(`Comment text ${emptyErr}`)
+    .isLength({ min: 5, max: 1000}).withMessage(`Comment must have more than 5 letters`)
     .optional()
 ]
