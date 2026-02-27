@@ -27,15 +27,18 @@ module.exports.getPostComments = [
   async(req, res) => {
     console.log('`/posts/:postId/comments GET route handler');
     console.log(`:postId is ${req.params.postId}`);
-    res.status(200).json(`GET all comments, :postId is ${req.params.postId}`);
+    const comments = await commentsService.fetchPostComments(req.params.postId);
+    res.status(200).json(comments);
   }
 ]
 
+// Route handler for GET '/post/:postId/comments/:commentId
 module.exports.getSpecificPostComment = [
   async(req, res) => {
     console.log(`'/posts/:postId/comments/:commentId' GET route handler`);
     console.log(`:postId is ${req.params.postId}, :commentId is ${req.params.commentId}`);
-    res.status(200).json(`GET a specific comment, :postId is ${req.params.postId}, :commentId is ${req.params.commentId}`);
+    const comment = await commentsService.fetchSpecificPostComment(req.params.postId,req.params.commentId )
+    res.status(200).json(comment);
   }
 ]
 

@@ -14,3 +14,31 @@ module.exports.createCommentByParentPostId = async (
     },
   });
 };
+
+// Finds all comments based on the passed postId
+module.exports.findAllPostComments = async(postId) => {
+  return await prisma.comment.findMany({
+    where: {
+      postId: postId
+    }
+  })
+}
+
+// module.exports.findPostCommentById = async(commentId, postId) => {
+//   return await prisma.comment.findFirst({
+//     where: {
+//       id: commentId,
+//       postId: postId
+//     }
+//   })
+// }
+
+// Finds a specific comment based on the passed postId and the comment's publicId
+module.exports.findPostCommentByPublicId = async(commentPublicId, postId) => {
+  return await prisma.comment.findFirst({
+    where:{
+      publicId: commentPublicId,
+      postId: postId,
+    }
+  })
+}
