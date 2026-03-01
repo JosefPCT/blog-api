@@ -54,16 +54,18 @@ module.exports.updateSpecificPostComment = [
     if(!errors.isEmpty()){
       res.status(400).json(errors)
     }
-    const updatedComment = await commentsService.updateSpecificPostComment(req.params.postId, req.params.commentId, matchedData(req));
+    const updatedComment = await commentsService.updateSpecificPostComment(req.params.postId, req.params.commentId, req.user, matchedData(req));
     res.status(200).json(updatedComment);
   }
 ]
 
+// Route handler for DELETE '/post/:postId/comments/:commentId
 module.exports.deleteSpecificPostComment = [
+  passport.authenticate("jwt", { session: false }),
   async(req, res) => {
     console.log(`'/posts/:postId/comments/:commentId' DELETE route handler`);
     console.log(`:postId is ${req.params.postId}, :commentId is ${req.params.commentId}`);
-    const deletedComment = await commentsService.deleteSpecificPostComment(req.params.postId, req.params.commentId);
+    const deletedComment = await commentsService.deleteSpecificPostComment(req.params.postId, req.params.commentId, req.user);
     res.status(200).json(deletedComment);
   }
 ]

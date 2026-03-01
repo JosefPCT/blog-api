@@ -69,7 +69,7 @@ module.exports.fetchSpecificPostComment = async(publicPostId, publicCommentId) =
 // Creates a filtered data object from the `data` object argument passed into it, only accepts fields that can be updated
 // Checks if the post and comment exists in the DB
 // Then call another query to update the comment if no errors
-module.exports.updateSpecificPostComment = async(postPublicId, commentPublicId, data) => {
+module.exports.updateSpecificPostComment = async(postPublicId, commentPublicId, currentUserData, data) => {
   const fieldsArr = ["text"];
   const filteredData = {};
 
@@ -79,6 +79,8 @@ module.exports.updateSpecificPostComment = async(postPublicId, commentPublicId, 
     }
   });
 
+  console.log(currentUserData);
+
   try {
     const post = await postQueries.findPostByPublicId(postPublicId);
     if(!post){
@@ -87,6 +89,10 @@ module.exports.updateSpecificPostComment = async(postPublicId, commentPublicId, 
     const comment = await commentQueries.findPostCommentByPublicId(commentPublicId, post.id);
     if(!comment){
       throw new customErrors.NotFound(`No comment with the id of ${commentPublicId}, is found in the post with the id of ${postPublicId}`);
+    }
+    if(comment.commenterId !== currentUserData.id){
+      console.log
+      throw new customErrors.BadRequest("Current user is not authorized to update this comment");
     }
 
     const updatedComment = await commentQueries.updatePostCommentByPublicId(commentPublicId, post.id, filteredData);
@@ -103,7 +109,7 @@ module.exports.updateSpecificPostComment = async(postPublicId, commentPublicId, 
 
 // Checks if the post and comment exists in the DB
 // Then send another query to delete the comment in the post by the comment's public id and the post's id
-module.exports.deleteSpecificPostComment = async(postPublicId, commentPublicId) => {
+module.exports.deleteSpecificPostComment = async(postPublicId, commentPublicId, currentUserData) => {
   try {
     const post = await postQueries.findPostByPublicId(postPublicId);
     if(!post){
@@ -112,6 +118,9 @@ module.exports.deleteSpecificPostComment = async(postPublicId, commentPublicId) 
     const comment = await commentQueries.findPostCommentByPublicId(commentPublicId, post.id);
     if(!comment){
       throw new customErrors.NotFound(`No comment with the id of ${commentPublicId}, is found in the post with the id of ${postPublicId}`);
+    }
+    if(comment.commenterId !== currentUserData){
+      throw new customErrors.BadRequest("Current user is not authorized to delete this comment");
     }
     const deletedComment = await commentQueries.deletePostCommentByPublicId(commentPublicId, post.id);
     return deletedComment;
