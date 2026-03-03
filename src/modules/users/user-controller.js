@@ -49,8 +49,8 @@ module.exports.userIdGetRoute = [
   async (req, res) => {
     console.log('users/:userId GET Route');
     const { userId } = req.params;
-    console.log(`Current user id: ${typeof req.user.id}`);
-    console.log(`Req params: ${typeof req.params.userId}`);
+    // console.log(`Current user id: ${typeof req.user.id}`);
+    // console.log(`Req params: ${typeof req.params.userId}`);
 
 
     let user = await userService.getUser(userId);
@@ -59,7 +59,11 @@ module.exports.userIdGetRoute = [
 ]
 
 // Handler for PUT/PATCH '/users/:userId' 
+// Can be accessed by admins or their own user
 module.exports.updateUserIdRoute = [
+  passport.authenticate("jwt", { session: false }),
+  logger,
+  isAdmin,
   validationMiddleware.validateUpdateUser,
   async(req, res) => {
     console.log('users/:userId PUT/PATCH Route');

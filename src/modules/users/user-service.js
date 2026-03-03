@@ -80,13 +80,44 @@ module.exports.updateUserData = async(userId, data) => {
     }
   });
 
-  const user = await queries.updateUserById(parseInt(userId), filteredData);
+  try {
+    let user = await queries.findUserById(parseInt(userId));
+    if(!user){
+      throw new customErrorType.NotFound(`User with id: ${userId} not found, updating data not succesful`);
+    }
 
-  if(!user){
-    throw new customErrorType.NotFound(`User with id: ${userId} not found, updating data not succesful`);
+    console.log(filteredData.email);
+    console.log(user.email);
+
+    // Code that double checks for same email when updating
+    // let updatedUser;
+    // if(filteredData.email === user.email){
+    //   console.log("Email and email to update is the same");
+    //   const { email, ...newFilteredData } = filteredData;
+    //   updatedUser = await queries.updateUserById(parseInt(userId), newFilteredData);
+    // } else {
+      // updatedUser = await queries.updateUserById(parseInt(userId), filteredData);
+    // }
+
+    const updatedUser = await queries.updateUserById(parseInt(userId), filteredData);
+  
+    if(!updatedUser){
+      throw new customErrorType.NotFound(`Updating data not succesful`);
+    }
+  
+    return updatedUser;
+  } catch (error) {
+    console.log(error);
+    if(error instanceof PrismaClientKnownRequestError){
+      if(error.code === "P2002"){
+        throw new customErrorType.GeneralError(`Unique constraint error, ${error.message}`);
+      }
+
+      throw new customErrorType.GeneralError("Database Error");
+
+    }
+    throw error;
   }
-
-  return user;
 }
 
 // Delete a user specified by the :userId param, should return an error message

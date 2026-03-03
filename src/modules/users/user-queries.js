@@ -63,17 +63,12 @@ module.exports.findUserByEmail = async(email) => {
 
 // Finds a user by their id and update it's data
 module.exports.updateUserById = async (id, data) => {
-  try {
-    return await prisma.user.update({
-      where: {
-        id,
-      },
-      data,
-    });
-  } catch (error) {
-    console.error(`Prisma Database Error: Error in updating a user`, error);
-    throw error;
-  }
+  return await prisma.user.update({
+    where: {
+      id,
+    },
+    data,
+  });
 };
 
 // DELETE
