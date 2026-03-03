@@ -3,12 +3,16 @@ const passport = require("passport");
 const { validationResult, matchedData} = require('express-validator')
 
 const validationMiddleware = require('../../middleware/validation.js')
+const authorizationMiddleware = require('../../middleware/authorization.js')
 const postsService = require('./post-service.js');
+
 
 // Handler for POST `/posts` route
 // Uses middleware to make sure users are authenticated and a middleware to handle validation of inputs
+// Can only be accessed by an admin or an author
 module.exports.createPost = [
   passport.authenticate("jwt", { session: false }),
+  authorizationMiddleware.checkRolesCreatePost,
   validationMiddleware.validatePost,
   async(req, res) => {
     console.log('`/posts` POST route handler');

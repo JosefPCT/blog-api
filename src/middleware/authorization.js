@@ -7,6 +7,22 @@ module.exports.isAdmin = (req, res, next) => {
     }
 };
 
+module.exports.isAuthor = (req, res, next) => {
+  if (req.user.isAuthor) {
+        next();
+    } else {
+        res.status(401).json( { msg: "You are not authorized to view this resource" });
+    }
+}
+
+module.exports.checkRolesCreatePost = (req, res, next) => {
+  if (req.user.isAdmin || req.user.isAuthor){
+    next();
+  } else {
+    res.status(401).json( { msg: "You are not authorized to view this message"})
+  }
+}
+
 module.exports.isAdminOrOwnUserData = (req, res, next) => {
   let parsedId;
   if(typeof req.params.userId === "string"){
