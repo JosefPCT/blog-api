@@ -65,7 +65,7 @@ module.exports.fetchSpecificPost = async(publicId) => {
     }
 
     const { id, authorId, ...filteredResult} = result;
-    filteredResult.author = `/api/v1/users/${id}`;
+    filteredResult.author = `/api/v1/users/${authorId}`;
     console.log(filteredResult);
     return filteredResult;
   } catch (error) {

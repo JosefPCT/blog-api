@@ -23,6 +23,17 @@ module.exports.checkRolesCreatePost = (req, res, next) => {
   }
 }
 
+module.exports.checkRolesAdminOrAuthorOwned = (req, res, next) => {
+  console.log(req.user);
+  const isFound = req.user.posts.find(post => post.publicId === req.params.postId);
+  console.log(isFound);
+  if (req.user.isAdmin || req.user.isAuthor || isFound) {
+    next()
+  } else {
+    res.status(401).json({ msg: "You are not authorized to do this"});
+  }
+}
+
 module.exports.isAdminOrOwnUserData = (req, res, next) => {
   let parsedId;
   if(typeof req.params.userId === "string"){

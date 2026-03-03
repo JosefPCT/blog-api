@@ -42,6 +42,10 @@ module.exports.findUserById = async (id) => {
     where: {
       id: id,
     },
+    include: {
+      posts: true,
+      comments: true,
+    }
   });
 };
 

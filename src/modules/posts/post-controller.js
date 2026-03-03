@@ -43,7 +43,7 @@ module.exports.getPostById = [
     console.log(`'/posts/:postId' GET route handler`);
     console.log(`:postId is ${req.params.postId}`);
     const { postId } = req.params;
-    console.log(req);
+    // console.log(req);
     const post = await postsService.fetchSpecificPost(postId);
     res.status(200).json(post);
   }
@@ -53,6 +53,7 @@ module.exports.getPostById = [
 // Uses middleware to make sure users are authenticated and a middleware to handle validation of inputs
 module.exports.updatePostById = [
   passport.authenticate("jwt", { session: false }),
+  authorizationMiddleware.checkRolesAdminOrAuthorOwned,
   validationMiddleware.validateUpdatePost,
   async(req, res) => {
     console.log(`'/posts/:postId' PUT route handler`);
