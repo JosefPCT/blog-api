@@ -4,7 +4,7 @@ const passport = require("passport");
 
 const userService = require('./user-service.js');
 const validationMiddleware = require('../../middleware/validation.js');
-const { isAdmin } = require('../../middleware/authorization.js');
+const { isAdmin, isAdminOrOwnUserData } = require('../../middleware/authorization.js');
 const { logger } = require('../../middleware/logger.js');
 
 const { validationResult, matchedData } = require('express-validator');
@@ -43,10 +43,15 @@ module.exports.usersGetRoute = [
 // Handler for GET '/users/:userId'
 // Can be accessed by admins or their own user 
 module.exports.userIdGetRoute = [
+  passport.authenticate("jwt", { session: false }),
   logger,
+  isAdminOrOwnUserData,
   async (req, res) => {
     console.log('users/:userId GET Route');
     const { userId } = req.params;
+    console.log(`Current user id: ${typeof req.user.id}`);
+    console.log(`Req params: ${typeof req.params.userId}`);
+
 
     let user = await userService.getUser(userId);
     res.status(200).json(user);

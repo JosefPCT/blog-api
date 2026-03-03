@@ -6,3 +6,19 @@ module.exports.isAdmin = (req, res, next) => {
         res.status(401).json( { msg: "You are not authorized to view this resource" });
     }
 };
+
+module.exports.isAdminOrOwnUserData = (req, res, next) => {
+  let parsedId;
+  if(typeof req.params.userId === "string"){
+    parsedId = parseInt(req.params.userId);
+  }
+
+  console.log(req.user.id);
+  console.log(parsedId);
+
+  if (req.user.isAdmin || req.user.id === parsedId) {
+    next();
+  } else {
+    res.status(401).json({ msg: "You are not authorized to view this resource"});
+  }
+}
