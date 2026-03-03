@@ -6,13 +6,19 @@ const customErrorType = require('../../utils/extended-errors.js');
 
 // Creates a user based on sent data
 // Checks if email sent already exists in the db
-module.exports.register = async(email, password, firstName, lastName, isAuthor) => {
+module.exports.register = async(email, password, firstName, lastName, isAuthor, isAdmin) => {
   let existingEmail = await queries.findUserByEmail(email);
   if(existingEmail){
     throw new Error(`Email already exists`);
   }
   let hash = await utils.generatePassword(password);
-  let result = await queries.createNewUser(email, firstName, lastName, hash, isAuthor);
+  let result;
+  if(!!isAdmin){
+    result = await queries.createNewUser(email, firstName, lastName, hash, isAuthor, isAdmin);
+  } else {
+    result = await queries.createNewUser(email, firstName, lastName, hash, isAuthor);
+  }
+  
   if(!result){
     throw new customErrorType.BadRequest(`User not created`);
   }
