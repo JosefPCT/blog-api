@@ -1,7 +1,10 @@
 // const queries = require('./user-queries.js');
 // const utils = require('../../utils/passwordUtils.js');
+const passport = require("passport");
+
 const userService = require('./user-service.js');
 const validationMiddleware = require('../../middleware/validation.js');
+const authorizationMiddleware = require('../../middleware/authorization.js');
 
 const { validationResult, matchedData } = require('express-validator');
 
@@ -24,6 +27,8 @@ module.exports.usersPostRoute = [
 
 // Handler for GET '/users'
 module.exports.usersGetRoute = [
+  passport.authenticate("jwt", { session: false }),
+  authorizationMiddleware.isAdmin,
   async (req, res) => {
     console.log('Users GET Route');
     let users = await userService.getAllUsers();
