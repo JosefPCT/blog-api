@@ -29,14 +29,21 @@ module.exports.createPost = async(data, userData) => {
 }
 
 // Returns all posts results
+// Filters result from the query to remove, the internal id, and add an author field with the url of the user as the value
 module.exports.fetchAllPosts = async() => {
   try {
-    const posts = await queries.findAllPosts()
-    if(!posts){
+    const result = await queries.findAllPosts()
+    if(!result){
       throw new customErrorType.BadRequest(`No posts found`);
     }
-    console.log(posts);
-    return posts;
+    console.log(result);
+    const filteredResult = []
+    result.forEach((item) => {
+      const { id, authorId, ...newItem } = item
+      newItem.author = `/api/v1/users/${authorId}`;
+      filteredResult.push(newItem);
+    })
+    return filteredResult;
   } catch (error) {
     console.log(error);
     if(error instanceof PrismaClientKnownRequestError){
