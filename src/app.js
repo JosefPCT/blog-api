@@ -18,6 +18,7 @@ const passport = require('passport');
 // Custom Middlewares
 const { notFoundErrorHandler } = require('./middleware/notFoundErrorHandler.js');
 const { globalErrorHandler } = require('./middleware/globalErrorHandler.js');
+const { logger } = require('./middleware/logger.js');
 
 // Main App Logic
 
@@ -32,6 +33,9 @@ const jwtStrat = require('./config/jwt-strategy.js');
 
 passport.use(localStrat);
 passport.use(jwtStrat);
+
+//Logger Middleware?
+app.use(logger);
 
 // Defining Routes
 app.use('/api/v1', apiRouter);
