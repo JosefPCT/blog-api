@@ -19,7 +19,8 @@ model User {
   hash      String
   firstName String
   lastName  String
-  isAuthor  Boolean
+  isAuthor  Boolean @default(false)
+  isAdmin   Boolean @default(false)
   posts     Post[]
   comments  Comment[]
 }
