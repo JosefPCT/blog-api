@@ -38,11 +38,11 @@ module.exports.updatePostByPublicId = async (publicId, data) => {
 };
 
 // Delete a specific post by their id
-module.exports.deletePostByPublicId = async (id) => {
+module.exports.deletePostByPublicId = async (publicId) => {
   try {
     return await prisma.post.delete({
       where: {
-        id: id,
+        publicId: publicId,
       },
     });
   } catch (error) {

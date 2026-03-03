@@ -51,6 +51,7 @@ module.exports.getPostById = [
 
 // Handler for PUT `/posts/:postId` route
 // Uses middleware to make sure users are authenticated and a middleware to handle validation of inputs
+// Can be accessed by an admin role or the owner of the post
 module.exports.updatePostById = [
   passport.authenticate("jwt", { session: false }),
   authorizationMiddleware.checkRolesAdminOrAuthorOwned,
@@ -76,6 +77,8 @@ module.exports.updatePostById = [
 
 // Handler for DELETE `/posts/:postId` route
 module.exports.deletePostById = [
+  passport.authenticate("jwt", { session: false }),
+  authorizationMiddleware.checkRolesAdminOrAuthorOwned,
   async(req, res) => {
     console.log(`'/posts/:postId' DELETE route handler`);
     console.log(`:postId is ${req.params.postId}`);
