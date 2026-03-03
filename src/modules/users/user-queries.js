@@ -33,26 +33,16 @@ module.exports.createNewUser = async (
 
 // Returns all users in the User Model
 module.exports.fetchAllUsers = async () => {
-  try {
-    return await prisma.user.findMany();
-  } catch (error) {
-    console.error("Prisma DB: Error getting all users", error);
-    throw error;
-  }
+  return await prisma.user.findMany();
 };
 
 // Return user specified by their id
 module.exports.findUserById = async (id) => {
-  try {
-    return await prisma.user.findFirst({
-      where: {
-        id: id,
-      },
-    });
-  } catch (error) {
-    console.error(`Prisma Database Error: Error in finding a user by id`, error);
-    throw error;
-  }
+  return await prisma.user.findFirst({
+    where: {
+      id: id,
+    },
+  });
 };
 
 // Return user specified by their email, use when checking if email already exists

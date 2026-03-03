@@ -3,6 +3,7 @@
 const queries = require('./user-queries.js');
 const utils = require('../../utils/passwordUtils.js');
 const customErrorType = require('../../utils/extended-errors.js');
+const { PrismaClientKnownRequestError } = require("@prisma/client/runtime/client");
 
 // Creates a user based on sent data
 // Checks if email sent already exists in the db
@@ -28,25 +29,41 @@ module.exports.register = async(email, password, firstName, lastName, isAuthor, 
 
 // Returns all users 
 module.exports.getAllUsers = async() => {
-  let users = await queries.fetchAllUsers();
-
-  if(!users){
-    throw new customErrorType.NotFound('No users in the database');
+  try {
+    let users = await queries.fetchAllUsers();
+  
+    if(!users){
+      throw new customErrorType.NotFound('No users in the database');
+    }
+  
+    return users;
+  } catch (error) {
+    console.log(error);
+    if(error instanceof PrismaClientKnownRequestError){
+      throw new customErrorType.GeneralError("Database Error");
+    }
+    throw error;
   }
-
-  return users;
 }
 
 // Fetch and return a user and their data
 // Return a user specified by their id, returns error message if user is not found in the DB
 module.exports.getUser = async(id) => {
-  let user = await queries.findUserById(parseInt(id));
-
-  if(!user){
-    throw new customErrorType.NotFound(`User with id: ${id} not found`);
+  try {
+    let user = await queries.findUserById(parseInt(id));
+  
+    if(!user){
+      throw new customErrorType.NotFound(`User with id: ${id} not found`);
+    }
+  
+    return user;
+  } catch (error) {
+    console.log(error);
+    if(error instanceof PrismaClientKnownRequestError){
+      throw new customErrorType.GeneralError("Database Error");
+    }
+    throw error;
   }
-
-  return user;
 }
 
 // Update a user record specified by the :userId params

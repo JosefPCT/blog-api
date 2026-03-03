@@ -10,6 +10,7 @@ const { logger } = require('../../middleware/logger.js');
 const { validationResult, matchedData } = require('express-validator');
 
 // Handler for POST '/users'
+// Can be accessed by everyone
 module.exports.usersPostRoute = [
   validationMiddleware.validateUser,
   async(req, res) => {
@@ -26,6 +27,7 @@ module.exports.usersPostRoute = [
 ]
 
 // Handler for GET '/users'
+// Can only be accessed by admins
 module.exports.usersGetRoute = [
   passport.authenticate("jwt", { session: false }),
   logger,
@@ -39,7 +41,9 @@ module.exports.usersGetRoute = [
 ]
 
 // Handler for GET '/users/:userId'
+// Can be accessed by admins or their own user 
 module.exports.userIdGetRoute = [
+  logger,
   async (req, res) => {
     console.log('users/:userId GET Route');
     const { userId } = req.params;
