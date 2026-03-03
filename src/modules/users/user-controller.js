@@ -63,7 +63,7 @@ module.exports.userIdGetRoute = [
 module.exports.updateUserIdRoute = [
   passport.authenticate("jwt", { session: false }),
   logger,
-  isAdmin,
+  isAdminOrOwnUserData,
   validationMiddleware.validateUpdateUser,
   async(req, res) => {
     console.log('users/:userId PUT/PATCH Route');
@@ -84,7 +84,11 @@ module.exports.updateUserIdRoute = [
 ]
 
 // Handler for DELETE '/users/:userId'
+// Can be accessed by admins or their own user
 module.exports.deleteUserRoute = [
+  passport.authenticate("jwt", { session: false }),
+  logger,
+  isAdminOrOwnUserData,
   async(req, res) => {
     console.log('/users/:userId DELETE Route');
     const { userId } = req.params;

@@ -122,11 +122,19 @@ module.exports.updateUserData = async(userId, data) => {
 
 // Delete a user specified by the :userId param, should return an error message
 module.exports.deleteUser = async(userId) => {
-  let deletedUser = await queries.deleteUserById(parseInt(userId));
-
-  if(!deletedUser){
-    throw new customErrorType.NotFound(`User with id: ${userId} not found, deleting data unsuccesful`);
+  try {
+    let deletedUser = await queries.deleteUserById(parseInt(userId));
+  
+    if(!deletedUser){
+      throw new customErrorType.NotFound(`User with id: ${userId} not found, deleting data unsuccesful`);
+    }
+  
+    return deletedUser;
+  } catch (error) {
+    console.log(error);
+    if(error instanceof PrismaClientKnownRequestError){
+      throw new customErrorType.GeneralError("Database Error");
+    }
+    throw error;
   }
-
-  return deletedUser;
 }

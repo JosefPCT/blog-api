@@ -75,14 +75,9 @@ module.exports.updateUserById = async (id, data) => {
 
 // Delete a user specified by the id
 module.exports.deleteUserById = async (id) => {
-  try {
-    return await prisma.user.delete({
-      where: {
-        id: id,
-      },
-    });
-  } catch (error) {
-    console.error(`Prisma Database Error: Error in deleting a user`, error);
-    throw error;
-  }
+  return await prisma.user.delete({
+    where: {
+      id: id,
+    },
+  });
 };
