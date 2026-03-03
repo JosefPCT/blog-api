@@ -27,6 +27,7 @@ module.exports.createPost = [
 ]
 
 // Handler for GET `/posts` route
+// Can be accessed by everyone, both authorized and non authorized users
 module.exports.getAllPosts = [
   async(req, res) => {
     console.log(`'/posts' GET route handler`);
@@ -36,11 +37,13 @@ module.exports.getAllPosts = [
 ]
 
 // Handler for GET `/posts/:postId` route
+// Can be accessed by everyone, both authorized and non authorized users
 module.exports.getPostById = [
   async(req, res) => {
     console.log(`'/posts/:postId' GET route handler`);
     console.log(`:postId is ${req.params.postId}`);
     const { postId } = req.params;
+    console.log(req);
     const post = await postsService.fetchSpecificPost(postId);
     res.status(200).json(post);
   }

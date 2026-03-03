@@ -69,7 +69,8 @@ module.exports.validateUpdateUser = [
 
 module.exports.validatePost = [
   body("authorId").trim()
-    .notEmpty().withMessage(`authorId ${emptyErr}`),
+    .notEmpty().withMessage(`authorId ${emptyErr}`)
+    .optional(),
   body("title").trim()
     .notEmpty().withMessage(`title ${emptyErr}`)
     .isLength({ min: 1 , max: 60}).withMessage(`title length must be between 1-60`),

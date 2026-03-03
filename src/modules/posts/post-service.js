@@ -35,6 +35,7 @@ module.exports.fetchAllPosts = async() => {
     if(!posts){
       throw new customErrorType.BadRequest(`No posts found`);
     }
+    console.log(posts);
     return posts;
   } catch (error) {
     console.log(error);
@@ -47,14 +48,19 @@ module.exports.fetchAllPosts = async() => {
 
 // Return a specific post
 // Handles error handling logic, catches prisma db query errors
+// Filters the returned data, removes the internal id, and adds a url path to the actual author of the post
 module.exports.fetchSpecificPost = async(publicId) => {
   try {
-    const post = await queries.findPostByPublicId(publicId);
-    console.log("Post", post);
-    if(!post){
+    const result = await queries.findPostByPublicId(publicId);
+    console.log("Post", result);
+    if(!result){
       throw new customErrorType.NotFound(`No post found by that id`);
     }
-    return post;
+
+    const { id, authorId, ...filteredResult} = result;
+    filteredResult.author = `/api/v1/users/${id}`;
+    console.log(filteredResult);
+    return filteredResult;
   } catch (error) {
     console.log("Error log.........");
     console.log(error);
