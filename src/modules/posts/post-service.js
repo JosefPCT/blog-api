@@ -100,7 +100,9 @@ module.exports.updateSpecificPost = async(postPublicId, data) => {
         throw new customErrorType.NotFound(`Post with id: ${postPublicId} not found, updating post data not succesful`);
     }
     const updatedPost = await queries.updatePostByPublicId(postPublicId, filteredData);
-    return updatedPost;
+    const {id, authorId, ...filteredResult} = updatedPost;
+    filteredResult.author = `/api/v1/users/${authorId}`;
+    return filteredResult;
   } catch (error) {
     console.log(error);
     if(error instanceof PrismaClientKnownRequestError){
@@ -118,6 +120,9 @@ module.exports.deleteSpecificPost = async(publicId) => {
       throw new customErrorType.NotFound(`Post with public id: ${publicId} not found, deleting post unsuccessful`);
     }
     const deletedPost = await queries.deletePostByPublicId(publicId);
+    const {id, authorId, ...filteredResult} = deletedPost;
+    filteredResult.author = `/api/v1/users/${authorId}`;
+    return filteredResult;
     return deletedPost;
   } catch (error) {
     console.log(error);
