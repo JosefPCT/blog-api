@@ -9,6 +9,7 @@ module.exports.createNewUser = async (
   lastName = "User",
   hash = "hashplaceholderax123",
   isAuthor = false,
+  isAdmin = false,
 ) => {
   try {
     const user = await prisma.user.create({
@@ -18,6 +19,7 @@ module.exports.createNewUser = async (
         lastName,
         hash,
         isAuthor,
+        isAdmin
       },
     });
     return user;

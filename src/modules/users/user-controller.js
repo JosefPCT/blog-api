@@ -18,8 +18,6 @@ module.exports.usersPostRoute = [
       return res.status(400).json(errors);
     }
     const { email, password, firstName, lastName, isAuthor, isAdmin } = matchedData(req);
-    // console.log(!!isAdmin);
-
     const newUser = await userService.register(email, password, firstName, lastName, isAuthor, isAdmin);
 
     res.status(201).json(newUser);
