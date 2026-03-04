@@ -6,6 +6,7 @@ const commentsService = require('./comment-service.js');
 
 
 // Route handler for POST '/post/:postId/comments', Create a comment on the post
+// Can be accessed by any logged in user
 module.exports.createPostComment = [
   passport.authenticate("jwt", { session: false }),
   validationMiddleware.validateCreateComment,
@@ -17,7 +18,7 @@ module.exports.createPostComment = [
     if(!errors.isEmpty()){
       res.status(400).json(errors)
     }
-    const createdComment = await commentsService.createPostComment(req.params.postId, req.user.id, matchedData(req))
+    const createdComment = await commentsService.createPostComment(req.params.postId, req.user, matchedData(req))
     res.status(200).json(createdComment)
   }
 ]

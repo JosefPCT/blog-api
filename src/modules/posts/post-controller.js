@@ -76,6 +76,7 @@ module.exports.updatePostById = [
 ]
 
 // Handler for DELETE `/posts/:postId` route
+// Can be accessed by an admin role or the owner of the post
 module.exports.deletePostById = [
   passport.authenticate("jwt", { session: false }),
   authorizationMiddleware.checkRolesAdminOrAuthorOwned,

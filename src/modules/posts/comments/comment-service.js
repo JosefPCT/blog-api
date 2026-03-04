@@ -6,15 +6,17 @@ const { PrismaClientKnownRequestError } = require("@prisma/client/runtime/client
 // Creates a comment based on the current user id, the parent post id and the passed data
 // Checks if the parent post exists and get its id
 // Passes on to the query layer the parsed user id, the parent post id, and the data
-module.exports.createPostComment = async(publicPostId, userId, data) => {
+module.exports.createPostComment = async(publicPostId, userData, data) => {
   try {
     const parentPost = await postQueries.findPostByPublicId(publicPostId)
     if(!parentPost){
       throw new customErrors.NotFound("Post parent of comment not found");
     }
   
-    const createdComment = await commentQueries.createCommentByParentPostId(parseInt(userId), parentPost.id, data);
-    return createdComment;
+    const result = await commentQueries.createCommentByParentPostId(parseInt(userData.id), parentPost.id, data);
+    const { id, commenterId, ...filteredData } = result;
+    filteredData.author = `/api/v1/users/${userData.id}`;
+    return filteredData;
   } catch (error) {
       console.log(error);
     if( error instanceof PrismaClientKnownRequestError ){
