@@ -35,7 +35,15 @@ module.exports.fetchPostComments = async(publicPostId) => {
       throw new customErrors.NotFound("Post parent does not exist");
     }
     const comments = await commentQueries.findAllPostComments(post.id);
-    return comments;
+
+    filteredComments = [];
+    comments.forEach((comment) => {
+      const { id, commenterId, postId , ...filteredComment } = comment;
+      filteredComment.author = `/api/v1/users/${commenterId}`;
+      filteredComments.push(filteredComment);
+    })
+
+    return filteredComments;
   } catch (error) {
     console.log(error)
     if(error instanceof PrismaClientKnownRequestError){
@@ -58,7 +66,9 @@ module.exports.fetchSpecificPostComment = async(publicPostId, publicCommentId) =
     if(!comment){
       throw new customErrors.NotFound("Comment does not exist or does not exist in this post");
     }
-    return comment;
+    const { id, commenterId, postId, ...filteredComment } = comment;
+    filteredComment.author = `api/v1/users/${commenterId}`;
+    return filteredComment;
   } catch (error) {
     console.log(error)
     if(error instanceof PrismaClientKnownRequestError){

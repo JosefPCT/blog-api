@@ -24,6 +24,7 @@ module.exports.createPostComment = [
 ]
 
 // Route handler for GET '/post/:postId/comments', Get all the comments of the post
+// Can be accessed by everyone
 module.exports.getPostComments = [
   async(req, res) => {
     console.log('`/posts/:postId/comments GET route handler');
@@ -34,6 +35,7 @@ module.exports.getPostComments = [
 ]
 
 // Route handler for GET '/post/:postId/comments/:commentId
+// Can be accessed by everyone
 module.exports.getSpecificPostComment = [
   async(req, res) => {
     console.log(`'/posts/:postId/comments/:commentId' GET route handler`);
