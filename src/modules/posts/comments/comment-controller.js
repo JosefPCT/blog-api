@@ -68,6 +68,7 @@ module.exports.updateSpecificPostComment = [
 // Route handler for DELETE '/post/:postId/comments/:commentId
 module.exports.deleteSpecificPostComment = [
   passport.authenticate("jwt", { session: false }),
+  authorizationMiddleware.checkRolesDeleteComment,
   async(req, res) => {
     console.log(`'/posts/:postId/comments/:commentId' DELETE route handler`);
     console.log(`:postId is ${req.params.postId}, :commentId is ${req.params.commentId}`);

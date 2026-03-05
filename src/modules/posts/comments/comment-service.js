@@ -6,6 +6,8 @@ const { PrismaClientKnownRequestError } = require("@prisma/client/runtime/client
 // Creates a comment based on the current user id, the parent post id and the passed data
 // Checks if the parent post exists and get its id
 // Passes on to the query layer the parsed user id, the parent post id, and the data
+// Filter the returning object to remove the internal id of the comment, the internal id of the commenter and 
+// Add an author field that has the url of the commenter/user
 module.exports.createPostComment = async(publicPostId, userData, data) => {
   try {
     const parentPost = await postQueries.findPostByPublicId(publicPostId)
@@ -28,6 +30,8 @@ module.exports.createPostComment = async(publicPostId, userData, data) => {
 
 // Gets the post id from the public post id argument
 // Checks if post exists, then gets all the comments based on the post id
+// Filter the returning object to remove the internal id of the comments, the internal id of the commenters and the internal id of the post
+// Add an author field that has the url of the commenter/user
 module.exports.fetchPostComments = async(publicPostId) => {
   try {
     const post = await postQueries.findPostByPublicId(publicPostId)
@@ -56,6 +60,8 @@ module.exports.fetchPostComments = async(publicPostId) => {
 // Gets the post id from the public post id argument
 // Checks if post exists, then check if the comment exists in the post from the comment's public id and the returned post id
 // Returns the entire comment data object
+// Filter the returning object to remove the internal id of the comment, the internal id of the commenter and the internal id of the post
+// Add an author field that has the url of the commenter/user
 module.exports.fetchSpecificPostComment = async(publicPostId, publicCommentId) => {
   try {
     const post = await postQueries.findPostByPublicId(publicPostId);
@@ -81,6 +87,8 @@ module.exports.fetchSpecificPostComment = async(publicPostId, publicCommentId) =
 // Creates a filtered data object from the `data` object argument passed into it, only accepts fields that can be updated
 // Checks if the post and comment exists in the DB
 // Then call another query to update the comment if no errors
+// Filter the returning object to remove the internal id of the update comment, the internal id of the commenter and the internal id of the post
+// Add an author field that has the url of the commenter/user
 module.exports.updateSpecificPostComment = async(postPublicId, commentPublicId, currentUserData, data) => {
   const fieldsArr = ["text"];
   const filteredData = {};
@@ -106,9 +114,12 @@ module.exports.updateSpecificPostComment = async(postPublicId, commentPublicId, 
       console.log
       throw new customErrors.BadRequest("Current user is not authorized to update this comment");
     }
-
     const updatedComment = await commentQueries.updatePostCommentByPublicId(commentPublicId, post.id, filteredData);
-    return updatedComment;
+
+    const { id, commenterId, postId, ...filteredComment } = updatedComment;
+    filteredComment.author = `/api/v1/users/${commenterId}`;
+
+    return filteredComment;
     
   } catch (error) {
     console.log(error)
@@ -121,6 +132,8 @@ module.exports.updateSpecificPostComment = async(postPublicId, commentPublicId, 
 
 // Checks if the post and comment exists in the DB
 // Then send another query to delete the comment in the post by the comment's public id and the post's id
+// Filter the returning object to remove the internal id of the deleted comment, the internal id of the commenter and the internal id of the post
+// Add an author field that has the url of the commenter/user
 module.exports.deleteSpecificPostComment = async(postPublicId, commentPublicId, currentUserData) => {
   try {
     const post = await postQueries.findPostByPublicId(postPublicId);
@@ -131,11 +144,15 @@ module.exports.deleteSpecificPostComment = async(postPublicId, commentPublicId, 
     if(!comment){
       throw new customErrors.NotFound(`No comment with the id of ${commentPublicId}, is found in the post with the id of ${postPublicId}`);
     }
-    if(comment.commenterId !== currentUserData){
+    if(comment.commenterId !== currentUserData.id){
       throw new customErrors.BadRequest("Current user is not authorized to delete this comment");
     }
     const deletedComment = await commentQueries.deletePostCommentByPublicId(commentPublicId, post.id);
-    return deletedComment;
+
+    const { id, commenterId, postId, ...filteredComment } = deletedComment;
+    filteredComment.author = `/api/v1/users/${commenterId}`;
+
+    return filteredComment;
   } catch (error) {
     console.log(error)
     if(error instanceof PrismaClientKnownRequestError){

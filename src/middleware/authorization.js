@@ -58,6 +58,14 @@ module.exports.checkRolesUpdateComment = (req, res, next) => {
   }
 }
 
+module.exports.checkRolesDeleteComment = (req, res, next) => {
+  if(checkAdminStatus(req.user) || isOwnComment(req.user, req.params.commentId) || isOwnPost(req.user, req.params.postId)){
+    next()
+  } else {
+    res.status(401).json({ msg: "You are not authorized to do this"});
+  }
+}
+
 
 module.exports.isAdminOrOwnUserData = (req, res, next) => {
   let parsedId;
