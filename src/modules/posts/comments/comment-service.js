@@ -110,10 +110,10 @@ module.exports.updateSpecificPostComment = async(postPublicId, commentPublicId, 
     if(!comment){
       throw new customErrors.NotFound(`No comment with the id of ${commentPublicId}, is found in the post with the id of ${postPublicId}`);
     }
-    if(comment.commenterId !== currentUserData.id){
-      console.log
-      throw new customErrors.BadRequest("Current user is not authorized to update this comment");
-    }
+    // if(comment.commenterId !== currentUserData.id){
+    //   console.log
+    //   throw new customErrors.BadRequest("Current user is not authorized to update this comment");
+    // }
     const updatedComment = await commentQueries.updatePostCommentByPublicId(commentPublicId, post.id, filteredData);
 
     const { id, commenterId, postId, ...filteredComment } = updatedComment;
@@ -137,6 +137,8 @@ module.exports.updateSpecificPostComment = async(postPublicId, commentPublicId, 
 module.exports.deleteSpecificPostComment = async(postPublicId, commentPublicId, currentUserData) => {
   try {
     const post = await postQueries.findPostByPublicId(postPublicId);
+    console.log(post);
+    console.log(currentUserData);
     if(!post){
       throw new customErrors.NotFound(`No post found by the id of ${postPublicId}`);
     }
@@ -144,9 +146,9 @@ module.exports.deleteSpecificPostComment = async(postPublicId, commentPublicId, 
     if(!comment){
       throw new customErrors.NotFound(`No comment with the id of ${commentPublicId}, is found in the post with the id of ${postPublicId}`);
     }
-    if(comment.commenterId !== currentUserData.id){
-      throw new customErrors.BadRequest("Current user is not authorized to delete this comment");
-    }
+    // if(comment.commenterId !== currentUserData.id || post.id !== currentUserData.id){
+    //   throw new customErrors.BadRequest("Current user is not authorized to delete this comment");
+    // }
     const deletedComment = await commentQueries.deletePostCommentByPublicId(commentPublicId, post.id);
 
     const { id, commenterId, postId, ...filteredComment } = deletedComment;
