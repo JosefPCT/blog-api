@@ -2,6 +2,7 @@ const passport = require("passport");
 const { validationResult, matchedData} = require('express-validator')
 
 const validationMiddleware = require('../../../middleware/validation.js')
+const authorizationMiddleware = require('../../../middleware/authorization.js');
 const commentsService = require('./comment-service.js');
 
 
@@ -46,8 +47,10 @@ module.exports.getSpecificPostComment = [
 ]
 
 // Route handler for PUT '/post/:postId/comments/:commentId 
+// Can only be accessed by an admin or the owner of the comment
 module.exports.updateSpecificPostComment = [
   passport.authenticate("jwt", { session: false }),
+  authorizationMiddleware.checkRolesUpdateComment,
   validationMiddleware.validateUpdateComment,
   async(req, res) => {
     console.log(`'/posts/:postId/comments/:commentId' PUT/PATCH route handler`);

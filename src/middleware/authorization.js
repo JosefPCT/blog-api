@@ -1,6 +1,24 @@
+// Helper functions 
+
+function checkAdminStatus(user) {
+  return user.isAdmin ? true : false;
+}
+
+function checkAuthorStatus(user){
+  return user.isAuthor ? true: false;
+}
+
+function isOwnPost(user, targetPostId){
+  return user.posts.find(post => post.publicId === targetPostId);
+}
+
+function isOwnComment(user, targetCommentId) {
+  return user.comments.find(comment => comment.publicId === targetCommentId);
+}
+
 // Helper middleware to use in route handlers to check if user is authenticated and if user is an admin
 module.exports.isAdmin = (req, res, next) => {
-    if (req.user.isAdmin) {
+    if (checkAdminStatus(req.user)) {
         next();
     } else {
         res.status(401).json( { msg: "You are not authorized to view this resource" });
@@ -8,7 +26,7 @@ module.exports.isAdmin = (req, res, next) => {
 };
 
 module.exports.isAuthor = (req, res, next) => {
-  if (req.user.isAuthor) {
+  if (checkAuthorStatus(req.user)) {
         next();
     } else {
         res.status(401).json( { msg: "You are not authorized to view this resource" });
@@ -16,7 +34,7 @@ module.exports.isAuthor = (req, res, next) => {
 }
 
 module.exports.checkRolesCreatePost = (req, res, next) => {
-  if (req.user.isAdmin || req.user.isAuthor){
+  if (checkAdminStatus(req.user) || checkAuthorStatus(req.user)){
     next();
   } else {
     res.status(401).json( { msg: "You are not authorized to view this message"})
@@ -25,14 +43,21 @@ module.exports.checkRolesCreatePost = (req, res, next) => {
 
 module.exports.checkRolesAdminOrAuthorOwned = (req, res, next) => {
   console.log(req.user);
-  const isFound = req.user.posts.find(post => post.publicId === req.params.postId);
-  console.log(isFound);
-  if (req.user.isAdmin || req.user.isAuthor || isFound) {
+  if (checkAdminStatus(req.user) || checkAuthorStatus(req.user) || isOwnPost(req.user, req.params.postId)) {
     next()
   } else {
     res.status(401).json({ msg: "You are not authorized to do this"});
   }
 }
+
+module.exports.checkRolesUpdateComment = (req, res, next) => {
+  if(checkAdminStatus(req.user) || isOwnComment(req.user, req.params.commentId)){
+    next()
+  } else {
+    res.status(401).json({ msg: "You are not authorized to do this"});
+  }
+}
+
 
 module.exports.isAdminOrOwnUserData = (req, res, next) => {
   let parsedId;
