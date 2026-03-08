@@ -71,8 +71,10 @@ module.exports.getUser = async(id) => {
     if(!user){
       throw new customErrorType.NotFound(`User with id: ${id} not found`);
     }
+
+    const { hash, ...filteredUser } = user;
   
-    return user;
+    return filteredUser;
   } catch (error) {
     console.log(error);
     if(error instanceof PrismaClientKnownRequestError){
