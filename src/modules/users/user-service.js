@@ -72,8 +72,27 @@ module.exports.getUser = async(id) => {
       throw new customErrorType.NotFound(`User with id: ${id} not found`);
     }
 
-    const { hash, ...filteredUser } = user;
-  
+    // Figure out how to remove the internal ids of the related records and add an `author` field with the url of the user as the value
+
+    const filteredComments  = [];
+    const filteredPosts = [];
+    const { hash, comments, posts, ...filteredUser } = user;
+
+    posts.forEach(post => {
+      const { id, authorId, ...filteredPost } = post;
+      filteredPost.author = `/api/v1/users/${authorId}`;
+      filteredPosts.push(filteredPost);
+    })
+    filteredUser.posts = filteredPosts;
+
+    comments.forEach(comment => {
+      const { id, commenterId, ...filteredComment } = comment;
+      filteredComment.author = `/api/v1/users/${commenterId}`;
+      filteredComments.push(filteredComment);
+    })
+
+    filteredUser.comments = filteredComments;
+
     return filteredUser;
   } catch (error) {
     console.log(error);
