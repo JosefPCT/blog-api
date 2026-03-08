@@ -4,7 +4,7 @@ const passport = require("passport");
 
 const userService = require('./user-service.js');
 const validationMiddleware = require('../../middleware/validation.js');
-const { isAdmin, isAdminOrOwnUserData } = require('../../middleware/authorization.js');
+const authorizationMiddleware = require('../../middleware/authorization.js');
 const { logger } = require('../../middleware/logger.js');
 
 const { validationResult, matchedData } = require('express-validator');
@@ -31,7 +31,7 @@ module.exports.usersPostRoute = [
 module.exports.usersGetRoute = [
   passport.authenticate("jwt", { session: false }),
   logger,
-  isAdmin,
+  authorizationMiddleware.isAdmin,
   async (req, res) => {
     console.log('Users GET Route');
     let users = await userService.getAllUsers();
@@ -45,7 +45,7 @@ module.exports.usersGetRoute = [
 module.exports.userIdGetRoute = [
   passport.authenticate("jwt", { session: false }),
   logger,
-  isAdminOrOwnUserData,
+  authorizationMiddleware.isAdminOrOwnUserData,
   async (req, res) => {
     console.log('users/:userId GET Route');
     const { userId } = req.params;
@@ -63,7 +63,7 @@ module.exports.userIdGetRoute = [
 module.exports.updateUserIdRoute = [
   passport.authenticate("jwt", { session: false }),
   logger,
-  isAdminOrOwnUserData,
+  authorizationMiddleware.isAdminOrOwnUserData,
   validationMiddleware.validateUpdateUser,
   async(req, res) => {
     console.log('users/:userId PUT/PATCH Route');
@@ -88,7 +88,7 @@ module.exports.updateUserIdRoute = [
 module.exports.deleteUserRoute = [
   passport.authenticate("jwt", { session: false }),
   logger,
-  isAdminOrOwnUserData,
+  authorizationMiddleware.isAdminOrOwnUserData,
   async(req, res) => {
     console.log('/users/:userId DELETE Route');
     const { userId } = req.params;

@@ -11,22 +11,17 @@ module.exports.createNewUser = async (
   isAuthor = false,
   isAdmin = false,
 ) => {
-  try {
-    const user = await prisma.user.create({
-      data: {
-        email,
-        firstName,
-        lastName,
-        hash,
-        isAuthor,
-        isAdmin
-      },
-    });
-    return user;
-  } catch (error) {
-    console.error("Prisma DB: Error creating new user:", error);
-    throw error;
-  }
+  const user = await prisma.user.create({
+    data: {
+      email,
+      firstName,
+      lastName,
+      hash,
+      isAuthor,
+      isAdmin
+    },
+  });
+  return user;
 };
 
 // READ

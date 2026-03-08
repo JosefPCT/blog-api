@@ -8,22 +8,31 @@ const { PrismaClientKnownRequestError } = require("@prisma/client/runtime/client
 // Creates a user based on sent data
 // Checks if email sent already exists in the db
 module.exports.register = async(email, password, firstName, lastName, isAuthor, isAdmin) => {
-  let existingEmail = await queries.findUserByEmail(email);
-  if(existingEmail){
-    throw new Error(`Email already exists`);
+  try {
+    let existingEmail = await queries.findUserByEmail(email);
+    if(existingEmail){
+      throw new Error(`Email already exists`);
+    }
+    let hashedPass = await utils.generatePassword(password);
+    let result;
+    if(!!isAdmin){
+      result = await queries.createNewUser(email, firstName, lastName, hashedPass, isAuthor, isAdmin);
+    } else {
+      result = await queries.createNewUser(email, firstName, lastName, hashedPass, isAuthor);
+    }
+    
+    if(!result){
+      throw new customErrorType.BadRequest(`User not created`);
+    }
+    const { hash, ...filteredResult } = result;
+    return filteredResult;
+  } catch (error) {
+    console.log(error);
+    if(error instanceof PrismaClientKnownRequestError){
+      throw new customErrorType.GeneralError("Database Error");
+    }
+    throw error;
   }
-  let hash = await utils.generatePassword(password);
-  let result;
-  if(!!isAdmin){
-    result = await queries.createNewUser(email, firstName, lastName, hash, isAuthor, isAdmin);
-  } else {
-    result = await queries.createNewUser(email, firstName, lastName, hash, isAuthor);
-  }
-  
-  if(!result){
-    throw new customErrorType.BadRequest(`User not created`);
-  }
-  return result;
 
 }
 
