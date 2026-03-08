@@ -79,7 +79,7 @@ module.exports.updateUserIdRoute = [
       return res.status(404).json({ error: 'User did not exist, user data not updated'});
     }
 
-    res.status(201).json(user);
+    res.status(201).json('message: Deleted succesfully');
   }
 ]
 
@@ -94,6 +94,6 @@ module.exports.deleteUserRoute = [
     const { userId } = req.params;
     const deletedUser = await userService.deleteUser(userId);
 
-    res.status(200).json(deletedUser);
+    res.status(200).json({ message: "Deleted user successfully"});
   }
 ]

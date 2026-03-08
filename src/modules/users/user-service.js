@@ -160,6 +160,7 @@ module.exports.updateUserData = async(userId, data) => {
 }
 
 // Delete a user specified by the :userId param, should return an error message
+// Might not need to return anything, just a success message when deleted successfully
 module.exports.deleteUser = async(userId) => {
   try {
     let deletedUser = await queries.deleteUserById(parseInt(userId));
