@@ -37,6 +37,7 @@ module.exports.register = async(email, password, firstName, lastName, isAuthor, 
 }
 
 // Returns all users 
+// TODO: Filters data based on optional arguments
 module.exports.getAllUsers = async() => {
   try {
     let users = await queries.fetchAllUsers();
@@ -44,8 +45,14 @@ module.exports.getAllUsers = async() => {
     if(!users){
       throw new customErrorType.NotFound('No users in the database');
     }
+
+    const filteredUsers = [];
+    users.forEach((user) => {
+      const { hash, ...filteredUser } = user;
+      filteredUsers.push(filteredUser); 
+    })
   
-    return users;
+    return filteredUsers;
   } catch (error) {
     console.log(error);
     if(error instanceof PrismaClientKnownRequestError){
