@@ -141,8 +141,10 @@ module.exports.updateUserData = async(userId, data) => {
     if(!updatedUser){
       throw new customErrorType.NotFound(`Updating data not succesful`);
     }
+
+    const { hash, ...filteredUser } = updatedUser; 
   
-    return updatedUser;
+    return filteredUser;
   } catch (error) {
     console.log(error);
     if(error instanceof PrismaClientKnownRequestError){
