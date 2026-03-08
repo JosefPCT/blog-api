@@ -45,7 +45,7 @@ module.exports.usersGetRoute = [
 module.exports.userIdGetRoute = [
   passport.authenticate("jwt", { session: false }),
   logger,
-  authorizationMiddleware.isAdminOrOwnUserData,
+  authorizationMiddleware.isAdminOrOwner,
   async (req, res) => {
     console.log('users/:userId GET Route');
     const { userId } = req.params;
@@ -63,7 +63,7 @@ module.exports.userIdGetRoute = [
 module.exports.updateUserIdRoute = [
   passport.authenticate("jwt", { session: false }),
   logger,
-  authorizationMiddleware.isAdminOrOwnUserData,
+  authorizationMiddleware.isAdminOrOwner,
   validationMiddleware.validateUpdateUser,
   async(req, res) => {
     console.log('users/:userId PUT/PATCH Route');
@@ -88,7 +88,7 @@ module.exports.updateUserIdRoute = [
 module.exports.deleteUserRoute = [
   passport.authenticate("jwt", { session: false }),
   logger,
-  authorizationMiddleware.isAdminOrOwnUserData,
+  authorizationMiddleware.isAdminOrOwner,
   async(req, res) => {
     console.log('/users/:userId DELETE Route');
     const { userId } = req.params;

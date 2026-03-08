@@ -50,7 +50,7 @@ module.exports.getSpecificPostComment = [
 // Can only be accessed by an admin or the owner of the comment
 module.exports.updateSpecificPostComment = [
   passport.authenticate("jwt", { session: false }),
-  authorizationMiddleware.checkRolesUpdateComment,
+  authorizationMiddleware.canUpdateComment,
   validationMiddleware.validateUpdateComment,
   async(req, res) => {
     console.log(`'/posts/:postId/comments/:commentId' PUT/PATCH route handler`);
@@ -68,7 +68,7 @@ module.exports.updateSpecificPostComment = [
 // Route handler for DELETE '/post/:postId/comments/:commentId
 module.exports.deleteSpecificPostComment = [
   passport.authenticate("jwt", { session: false }),
-  authorizationMiddleware.checkRolesDeleteComment,
+  authorizationMiddleware.canDeleteComment,
   async(req, res) => {
     console.log(`'/posts/:postId/comments/:commentId' DELETE route handler`);
     console.log(`:postId is ${req.params.postId}, :commentId is ${req.params.commentId}`);

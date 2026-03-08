@@ -12,7 +12,7 @@ const postsService = require('./post-service.js');
 // Can only be accessed by an admin or an author
 module.exports.createPost = [
   passport.authenticate("jwt", { session: false }),
-  authorizationMiddleware.checkRolesCreatePost,
+  authorizationMiddleware.isAdminOrAuthor,
   validationMiddleware.validatePost,
   async(req, res) => {
     console.log('`/posts` POST route handler');
@@ -54,7 +54,7 @@ module.exports.getPostById = [
 // Can be accessed by an admin role or the owner of the post
 module.exports.updatePostById = [
   passport.authenticate("jwt", { session: false }),
-  authorizationMiddleware.checkRolesAdminOrAuthorOwned,
+  authorizationMiddleware.isAdminOrPostOwner,
   validationMiddleware.validateUpdatePost,
   async(req, res) => {
     console.log(`'/posts/:postId' PUT route handler`);
@@ -79,7 +79,7 @@ module.exports.updatePostById = [
 // Can be accessed by an admin role or the owner of the post
 module.exports.deletePostById = [
   passport.authenticate("jwt", { session: false }),
-  authorizationMiddleware.checkRolesAdminOrAuthorOwned,
+  authorizationMiddleware.isAdminOrPostOwner,
   async(req, res) => {
     console.log(`'/posts/:postId' DELETE route handler`);
     console.log(`:postId is ${req.params.postId}`);

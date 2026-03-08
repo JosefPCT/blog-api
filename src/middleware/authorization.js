@@ -33,41 +33,7 @@ module.exports.isAuthor = (req, res, next) => {
     }
 }
 
-module.exports.checkRolesCreatePost = (req, res, next) => {
-  if (checkAdminStatus(req.user) || checkAuthorStatus(req.user)){
-    next();
-  } else {
-    res.status(401).json( { msg: "You are not authorized to view this message"})
-  }
-}
-
-module.exports.checkRolesAdminOrAuthorOwned = (req, res, next) => {
-  console.log(req.user);
-  if (checkAdminStatus(req.user) || checkAuthorStatus(req.user) || isOwnPost(req.user, req.params.postId)) {
-    next()
-  } else {
-    res.status(401).json({ msg: "You are not authorized to do this"});
-  }
-}
-
-module.exports.checkRolesUpdateComment = (req, res, next) => {
-  if(checkAdminStatus(req.user) || isOwnComment(req.user, req.params.commentId)){
-    next()
-  } else {
-    res.status(401).json({ msg: "You are not authorized to do this"});
-  }
-}
-
-module.exports.checkRolesDeleteComment = (req, res, next) => {
-  if(checkAdminStatus(req.user) || isOwnComment(req.user, req.params.commentId) || isOwnPost(req.user, req.params.postId)){
-    next()
-  } else {
-    res.status(401).json({ msg: "You are not authorized to do this"});
-  }
-}
-
-
-module.exports.isAdminOrOwnUserData = (req, res, next) => {
+module.exports.isAdminOrOwner = (req, res, next) => {
   let parsedId;
   if(typeof req.params.userId === "string"){
     parsedId = parseInt(req.params.userId);
@@ -76,9 +42,44 @@ module.exports.isAdminOrOwnUserData = (req, res, next) => {
   console.log(req.user.id);
   console.log(parsedId);
 
-  if (req.user.isAdmin || req.user.id === parsedId) {
+  if (checkAdminStatus(req.user) || req.user.id === parsedId) {
     next();
   } else {
     res.status(401).json({ msg: "You are not authorized to view this resource"});
   }
 }
+
+module.exports.isAdminOrAuthor = (req, res, next) => {
+  if (checkAdminStatus(req.user) || checkAuthorStatus(req.user)){
+    next();
+  } else {
+    res.status(401).json( { msg: "You are not authorized to view this message"})
+  }
+}
+
+module.exports.isAdminOrPostOwner = (req, res, next) => {
+  console.log(req.user);
+  if (checkAdminStatus(req.user) || checkAuthorStatus(req.user) || isOwnPost(req.user, req.params.postId)) {
+    next()
+  } else {
+    res.status(401).json({ msg: "You are not authorized to do this"});
+  }
+}
+
+module.exports.canUpdateComment = (req, res, next) => {
+  if(checkAdminStatus(req.user) || isOwnComment(req.user, req.params.commentId)){
+    next()
+  } else {
+    res.status(401).json({ msg: "You are not authorized to do this"});
+  }
+}
+
+module.exports.canDeleteComment = (req, res, next) => {
+  if(checkAdminStatus(req.user) || isOwnComment(req.user, req.params.commentId) || isOwnPost(req.user, req.params.postId)){
+    next()
+  } else {
+    res.status(401).json({ msg: "You are not authorized to do this"});
+  }
+}
+
+
