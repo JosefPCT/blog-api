@@ -27,8 +27,78 @@ module.exports.createNewUser = async (
 // READ
 
 // Returns all users in the User Model
-module.exports.fetchAllUsers = async () => {
-  return await prisma.user.findMany();
+// Accepts optional arguments to specify which users to show
+// argument names corresponds to column names
+// Values can be string or boolean for certain columns
+// Optional arguments are:
+// email, firstName, lastName, isAuthor, isAdmin, numberOfPosts, numberOfComments
+module.exports.fetchAllUsers = async (optionalArgs, sortObj) => {
+
+  // console.log(optionalArgs.sort);
+
+  let userIdsForPost = [];
+  let userIdsForComments = [];
+
+  // When numberOfPosts is not equals to zero
+  // Queries to the Post model to get all users/authors that has a post and group them by author
+  // Using the data, filter out depending on the value of the inputted value in numberOfPosts, then filters out the data to only get the authorId(the user's `id`)
+  // User ids will  be used in the findMany query on the `id` field in the `in` 
+  if(optionalArgs.numberOfPosts && parseInt(optionalArgs.numberOfPosts) !== 0){
+    
+    const usersWithPostCount = await prisma.post.groupBy({
+      by: ['authorId'],
+      _count: {
+        id: true,
+      },
+    });
+
+    const filteredUsers = usersWithPostCount.filter(userGrp => userGrp._count.id >= optionalArgs.numberOfPosts);
+    userIdsForPost = filteredUsers.map(post => post.authorId);
+  } 
+  
+  // Same logic as the above function but with comments
+  if(optionalArgs.numberOfComments && parseInt(optionalArgs.numberOfComments) !== 0){
+
+    const usersWithCommentCount = await prisma.comment.groupBy({
+      by: ['commenterId'],
+      _count: {
+        id: true,
+      }
+    });
+
+    const filteredUsers = usersWithCommentCount.filter(userGrp => userGrp._count.id >= optionalArgs.numberOfComments);
+    userIdsForComments = filteredUsers.map(comment => comment.commenterId);
+  }
+
+  // Combine user ids posts + comments
+  const userIds = [...userIdsForPost, ...userIdsForComments];
+
+
+  return await prisma.user.findMany({
+    where: {
+      email: optionalArgs.email ? { contains: optionalArgs.email } : undefined,
+      firstName: optionalArgs.firstName ? {  contains: optionalArgs.firstName } : undefined,
+      lastName:  optionalArgs.lastName ?  { contains: optionalArgs.lastName } : undefined,
+      isAuthor: optionalArgs.isAuthor ? ( optionalArgs.isAuthor === 'true' ? true : false ) : undefined,
+      isAdmin: optionalArgs.isAdmin ? ( optionalArgs.isAdmin === 'true' ? true : false ) : undefined,
+      posts: optionalArgs.numberOfPosts && parseInt(optionalArgs.numberOfPosts) === 0 ? { none: {}} : undefined,
+      comments: optionalArgs.numberOfComments && parseInt(optionalArgs.numberOfComments) === 0 ? { none: {}} : undefined,
+      id: (optionalArgs.numberOfPosts && parseInt(optionalArgs.numberOfPosts) !== 0) || (optionalArgs.numberOfComments && parseInt(optionalArgs.numberOfComments) !== 0) ? { in: userIds } : undefined,
+    },
+    orderBy: {
+      email: sortObj.email ? sortObj.email : undefined,
+      firstName: sortObj.firstName ? sortObj.firstName : undefined,
+      lastName: sortObj.lastName ? sortObj.lastName : undefined,
+      isAuthor: sortObj.isAuthor ? sortObj.isAuthor : undefined,
+      isAdmin: sortObj.isAdmin ? sortObj.isAdmin : undefined,
+      posts: sortObj.posts ? { _count: sortObj.posts} : undefined,
+      comments: sortObj.comments ? { _count: sortObj.comments } : undefined
+    },
+    include: {
+      posts: true,
+      comments: true
+    }
+  });
 };
 
 // Return user specified by their id

@@ -34,7 +34,8 @@ module.exports.usersGetRoute = [
   authorizationMiddleware.isAdmin,
   async (req, res) => {
     console.log('Users GET Route');
-    let users = await userService.getAllUsers();
+
+    let users = await userService.getAllUsers(req.query);
 
     res.status(201).json(users);
   }

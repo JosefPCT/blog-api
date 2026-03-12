@@ -38,14 +38,81 @@ module.exports.register = async(email, password, firstName, lastName, isAuthor, 
 
 // Returns all users 
 // TODO: Filters data based on optional arguments
-module.exports.getAllUsers = async() => {
+module.exports.getAllUsers = async(query) => {
   try {
-    let users = await queries.fetchAllUsers();
+    // Checks if req.query is not empty
+    if(Object.keys(query).length !== 0){
+      console.log(`Has req query`, query)
+    } else {
+      console.log("No req query");
+    }
+
+    // const optionalArgs = {
+    //   email: null,
+    //   firstName: null,
+    //   lastName: null,
+    //   isAuthor: null,
+    //   isAdmin: null
+    // }
+
+    // Object.entries(query).forEach(([key, value]) => {
+    //   if(key === 'email'){
+    //     optionalArgs.email = value;
+    //   }
+    // });
+
+    // if(optionalArgs.email){
+    //   console.log("Has email")
+    // } else {
+    //   console.log("Has no email")
+    // }
+
+    // if(query.email){
+    //   console.log("Has email", query.email);
+    // } else {
+    //   console.log("Has no email", query.email)
+    // }
+
+
+    // const whereClause = {
+    //   where: {
+    //     email: { contains: email }
+    //   }
+    // }
+
+    const sortObj = {};
+    // Creating the sort object
+    if(!!query.sort){
+      console.log(query.sort);
+      console.log(query.sort.split(","));
+      let arr = query.sort.split(",");
+      arr.forEach(item => {
+        let sort;
+        let symbol = item.slice(0,1);
+        let key = item.slice(1, item.length);
+        console.log(symbol)
+        console.log(key)
+        if(symbol === '+'){
+          sort = 'asc';
+        } else if (symbol === '-') {
+          sort = 'desc';
+        } else {
+          sort = 'undefined';
+        }
+        sortObj[key] = sort;
+      })
+
+    }
+    console.log(sortObj);
+
+    // Get user data from the db
+    let users = await queries.fetchAllUsers(query, sortObj);
   
     if(!users){
       throw new customErrorType.NotFound('No users in the database');
     }
 
+    // Filter the data received from the db
     const filteredUsers = [];
     users.forEach((user) => {
       const { hash, ...filteredUser } = user;
