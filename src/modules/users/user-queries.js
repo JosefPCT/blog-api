@@ -43,6 +43,8 @@ module.exports.fetchAllUsers = async (optionalArgs, sortObj) => {
   // Queries to the Post model to get all users/authors that has a post and group them by author
   // Using the data, filter out depending on the value of the inputted value in numberOfPosts, then filters out the data to only get the authorId(the user's `id`)
   // User ids will  be used in the findMany query on the `id` field in the `in` 
+  // Dynamic pagination that takes 5 records by page, depending on the optional page query parameter
+  // Dynamic sorting depending on the optional sort query parameter with (+(%2b) or -) symbols (sort object created in the service layer)
   if(optionalArgs.numberOfPosts && parseInt(optionalArgs.numberOfPosts) !== 0){
     
     const usersWithPostCount = await prisma.post.groupBy({
@@ -75,6 +77,8 @@ module.exports.fetchAllUsers = async (optionalArgs, sortObj) => {
 
 
   return await prisma.user.findMany({
+    take: optionalArgs.page ? 5 : undefined,
+    skip: optionalArgs.page ? (((optionalArgs.page) - 1) * 5) : undefined,
     where: {
       email: optionalArgs.email ? { contains: optionalArgs.email } : undefined,
       firstName: optionalArgs.firstName ? {  contains: optionalArgs.firstName } : undefined,
