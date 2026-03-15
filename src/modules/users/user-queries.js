@@ -36,7 +36,7 @@ module.exports.fetchAllUsers = async (optionalArgs, sortObj) => {
 
   // console.log(optionalArgs.sort);
 
-  let userIdsForPost = [];
+  let userIdsForPost = []; 
   let userIdsForComments = [];
 
   // When numberOfPosts is not equals to zero
@@ -75,12 +75,8 @@ module.exports.fetchAllUsers = async (optionalArgs, sortObj) => {
   // Combine user ids posts + comments
   const userIds = [...userIdsForPost, ...userIdsForComments];
 
-
-  return await prisma.user.findMany({
-    take: optionalArgs.page ? 5 : undefined,
-    skip: optionalArgs.page ? (((optionalArgs.page) - 1) * 5) : undefined,
-    where: {
-      email: optionalArgs.email ? { contains: optionalArgs.email } : undefined,
+  const whereObj = {
+    email: optionalArgs.email ? { contains: optionalArgs.email } : undefined,
       firstName: optionalArgs.firstName ? {  contains: optionalArgs.firstName } : undefined,
       lastName:  optionalArgs.lastName ?  { contains: optionalArgs.lastName } : undefined,
       isAuthor: optionalArgs.isAuthor ? ( optionalArgs.isAuthor === 'true' ? true : false ) : undefined,
@@ -88,6 +84,21 @@ module.exports.fetchAllUsers = async (optionalArgs, sortObj) => {
       posts: optionalArgs.numberOfPosts && parseInt(optionalArgs.numberOfPosts) === 0 ? { none: {}} : undefined,
       comments: optionalArgs.numberOfComments && parseInt(optionalArgs.numberOfComments) === 0 ? { none: {}} : undefined,
       id: (optionalArgs.numberOfPosts && parseInt(optionalArgs.numberOfPosts) !== 0) || (optionalArgs.numberOfComments && parseInt(optionalArgs.numberOfComments) !== 0) ? { in: userIds } : undefined,
+  }
+
+  const OrWhereArrObj = Array.from(Object.keys(whereObj), (key) => ({ [key]: whereObj[key]}));
+  console.log(OrWhereArrObj);
+
+  // console.log(whereObj);
+  console.log("mode:" , optionalArgs.mode);
+
+  return await prisma.user.findMany({
+    take: optionalArgs.page ? 5 : undefined,
+    skip: optionalArgs.page ? (((optionalArgs.page) - 1) * 5) : undefined,
+    where: {
+      AND: optionalArgs.mode === 'and' || optionalArgs.mode === undefined  ? whereObj : undefined,
+      NOT: optionalArgs.mode === 'not' ? { OR: OrWhereArrObj} : undefined,
+      OR: optionalArgs.mode === 'or' ? OrWhereArrObj : undefined,
     },
     orderBy: {
       email: sortObj.email ? sortObj.email : undefined,
