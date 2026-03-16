@@ -47,41 +47,10 @@ module.exports.getAllUsers = async(query) => {
       console.log("No req query");
     }
 
-    // const optionalArgs = {
-    //   email: null,
-    //   firstName: null,
-    //   lastName: null,
-    //   isAuthor: null,
-    //   isAdmin: null
-    // }
-
-    // Object.entries(query).forEach(([key, value]) => {
-    //   if(key === 'email'){
-    //     optionalArgs.email = value;
-    //   }
-    // });
-
-    // if(optionalArgs.email){
-    //   console.log("Has email")
-    // } else {
-    //   console.log("Has no email")
-    // }
-
-    // if(query.email){
-    //   console.log("Has email", query.email);
-    // } else {
-    //   console.log("Has no email", query.email)
-    // }
-
-
-    // const whereClause = {
-    //   where: {
-    //     email: { contains: email }
-    //   }
-    // }
-
     const sortObj = {};
-    // Creating the sort object
+
+    // Creating the sort object to pass onto the query function
+    // Basically just replaces the symbols with the appropriate sorting order, while creating it in the object syntax
     if(!!query.sort){
       console.log(query.sort);
       console.log(query.sort.split(","));

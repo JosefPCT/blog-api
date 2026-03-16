@@ -34,8 +34,7 @@ module.exports.createNewUser = async (
 // email, firstName, lastName, isAuthor, isAdmin, numberOfPosts, numberOfComments
 module.exports.fetchAllUsers = async (optionalArgs, sortObj) => {
 
-  // console.log(optionalArgs.sort);
-
+  // Define arrays outside the if blocks for scoping
   let userIdsForPost = []; 
   let userIdsForComments = [];
 
@@ -75,8 +74,9 @@ module.exports.fetchAllUsers = async (optionalArgs, sortObj) => {
   // Combine user ids posts + comments
   const userIds = [...userIdsForPost, ...userIdsForComments];
 
+  // Separated object to use in the WHERE clause when req.query.mode is not defined or explicitly defined as AND
   const whereObj = {
-    email: optionalArgs.email ? { contains: optionalArgs.email } : undefined,
+      email: optionalArgs.email ? { contains: optionalArgs.email } : undefined,
       firstName: optionalArgs.firstName ? {  contains: optionalArgs.firstName } : undefined,
       lastName:  optionalArgs.lastName ?  { contains: optionalArgs.lastName } : undefined,
       isAuthor: optionalArgs.isAuthor ? ( optionalArgs.isAuthor === 'true' ? true : false ) : undefined,
@@ -86,12 +86,11 @@ module.exports.fetchAllUsers = async (optionalArgs, sortObj) => {
       id: (optionalArgs.numberOfPosts && parseInt(optionalArgs.numberOfPosts) !== 0) || (optionalArgs.numberOfComments && parseInt(optionalArgs.numberOfComments) !== 0) ? { in: userIds } : undefined,
   }
 
+  // Array containing objects to use in the WHERE clause when req.query.mode is either OR or NOT
   const OrWhereArrObj = Array.from(Object.keys(whereObj), (key) => ({ [key]: whereObj[key]}));
   console.log(OrWhereArrObj);
 
-  // console.log(whereObj);
-  console.log("mode:" , optionalArgs.mode);
-
+  // Main query will return the resulting data
   return await prisma.user.findMany({
     take: optionalArgs.page ? 5 : undefined,
     skip: optionalArgs.page ? (((optionalArgs.page) - 1) * 5) : undefined,
