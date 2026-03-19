@@ -1,7 +1,8 @@
 // Has a query layer to handle direct db interactions
 
 const queries = require('./user-queries.js');
-const utils = require('../../utils/passwordUtils.js');
+const passwordUtils = require('../../utils/passwordUtils.js');
+const utils = require('../../utils/userUtils.js');
 const customErrorType = require('../../utils/extended-errors.js');
 const { PrismaClientKnownRequestError } = require("@prisma/client/runtime/client");
 
@@ -13,7 +14,7 @@ module.exports.register = async(email, password, firstName, lastName, isAuthor, 
     if(existingEmail){
       throw new Error(`Email already exists`);
     }
-    let hashedPass = await utils.generatePassword(password);
+    let hashedPass = await passwordUtils.generatePassword(password);
     let result;
     if(!!isAdmin){
       result = await queries.createNewUser(email, firstName, lastName, hashedPass, isAuthor, isAdmin);
@@ -37,40 +38,12 @@ module.exports.register = async(email, password, firstName, lastName, isAuthor, 
 }
 
 // Returns all users 
-// TODO: Filters data based on optional arguments
+// Accepts query object keys of: email, firstName, lastName, isAuthor, isAdmin,  numberOfPosts, numberOfComments, sort, mode
 module.exports.getAllUsers = async(query) => {
   try {
-    // Checks if req.query is not empty
-    // if(Object.keys(query).length !== 0){
-    //   console.log(`Has req query`, query)
-    // } else {
-    //   console.log("No req query");
-    // }
-
     // Creating the sort object to pass onto the query function
     // Basically just replaces the symbols with the appropriate sorting order, while creating it in the object syntax
-    const sortObj = {};
-    if(!!query.sort){
-      console.log(query.sort);
-      console.log(query.sort.split(","));
-      let arr = query.sort.split(",");
-      arr.forEach(item => {
-        let sort;
-        let symbol = item.slice(0,1);
-        let key = item.slice(1, item.length);
-        console.log(symbol)
-        console.log(key)
-        if(symbol === '+'){
-          sort = 'asc';
-        } else if (symbol === '-') {
-          sort = 'desc';
-        } else {
-          sort = 'undefined';
-        }
-        sortObj[key] = sort;
-      })
-
-    }
+    const sortObj = await utils.createSortObject(query);
     console.log(sortObj);
 
     // Get user data from the db
@@ -80,11 +53,7 @@ module.exports.getAllUsers = async(query) => {
     }
 
     // Filter the data received from the db
-    const filteredUsers = [];
-    users.forEach((user) => {
-      const { hash, ...filteredUser } = user;
-      filteredUsers.push(filteredUser); 
-    })
+    const filteredUsers = await utils.filterReturnedUsersData(users);
   
     return filteredUsers;
   } catch (error) {
@@ -106,26 +75,10 @@ module.exports.getUser = async(id) => {
       throw new customErrorType.NotFound(`User with id: ${id} not found`);
     }
 
-    // Figure out how to remove the internal ids of the related records and add an `author` field with the url of the user as the value
-
-    const filteredComments  = [];
-    const filteredPosts = [];
     const { hash, comments, posts, ...filteredUser } = user;
 
-    posts.forEach(post => {
-      const { id, authorId, ...filteredPost } = post;
-      filteredPost.author = `/api/v1/users/${authorId}`;
-      filteredPosts.push(filteredPost);
-    })
-    filteredUser.posts = filteredPosts;
-
-    comments.forEach(comment => {
-      const { id, commenterId, ...filteredComment } = comment;
-      filteredComment.author = `/api/v1/users/${commenterId}`;
-      filteredComments.push(filteredComment);
-    })
-
-    filteredUser.comments = filteredComments;
+    filteredUser.posts = await utils.filterUserPosts(posts);
+    filteredUser.comments = await utils.filterUserComments(comments);
 
     return filteredUser;
   } catch (error) {
@@ -141,15 +94,7 @@ module.exports.getUser = async(id) => {
 // Creates filtered data and sent to the query function to update
 // Filters data by checking if req.body includes valid fieldnames and ignores if not valid fieldname, accounts for if req.body have missing valid fieldname
 module.exports.updateUserData = async(userId, data) => {
-  const detailsArr = [ "email", "firstName", "lastName", "hash", "isAuthor"];
-  const filteredData = {};
-
-  Object.entries(data).forEach(([key, value]) => {
-    if(detailsArr.includes(key)){
-      // console.log(`${key}: ${value}`);
-      filteredData[`${key}`] = value;
-    }
-  });
+  const filteredData = utils.createUpdateDataObject(data);
 
   try {
     let user = await queries.findUserById(parseInt(userId));
@@ -159,16 +104,6 @@ module.exports.updateUserData = async(userId, data) => {
 
     console.log(filteredData.email);
     console.log(user.email);
-
-    // Code that double checks for same email when updating
-    // let updatedUser;
-    // if(filteredData.email === user.email){
-    //   console.log("Email and email to update is the same");
-    //   const { email, ...newFilteredData } = filteredData;
-    //   updatedUser = await queries.updateUserById(parseInt(userId), newFilteredData);
-    // } else {
-      // updatedUser = await queries.updateUserById(parseInt(userId), filteredData);
-    // }
 
     const updatedUser = await queries.updateUserById(parseInt(userId), filteredData);
   

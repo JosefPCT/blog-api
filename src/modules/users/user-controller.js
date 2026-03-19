@@ -80,7 +80,7 @@ module.exports.updateUserIdRoute = [
       return res.status(404).json({ error: 'User did not exist, user data not updated'});
     }
 
-    res.status(201).json('message: Deleted succesfully');
+    res.status(201).json('message: Updated succesfully');
   }
 ]
 
