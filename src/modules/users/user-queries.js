@@ -45,7 +45,6 @@ module.exports.fetchAllUsers = async (optionalArgs, sortObj) => {
   // Dynamic pagination that takes 5 records by page, depending on the optional page query parameter
   // Dynamic sorting depending on the optional sort query parameter with (+(%2b) or -) symbols (sort object created in the service layer)
   if(optionalArgs.numberOfPosts && parseInt(optionalArgs.numberOfPosts) !== 0){
-    
     const usersWithPostCount = await prisma.post.groupBy({
       by: ['authorId'],
       _count: {
@@ -59,7 +58,6 @@ module.exports.fetchAllUsers = async (optionalArgs, sortObj) => {
   
   // Same logic as the above function but with comments
   if(optionalArgs.numberOfComments && parseInt(optionalArgs.numberOfComments) !== 0){
-
     const usersWithCommentCount = await prisma.comment.groupBy({
       by: ['commenterId'],
       _count: {

@@ -41,16 +41,15 @@ module.exports.register = async(email, password, firstName, lastName, isAuthor, 
 module.exports.getAllUsers = async(query) => {
   try {
     // Checks if req.query is not empty
-    if(Object.keys(query).length !== 0){
-      console.log(`Has req query`, query)
-    } else {
-      console.log("No req query");
-    }
-
-    const sortObj = {};
+    // if(Object.keys(query).length !== 0){
+    //   console.log(`Has req query`, query)
+    // } else {
+    //   console.log("No req query");
+    // }
 
     // Creating the sort object to pass onto the query function
     // Basically just replaces the symbols with the appropriate sorting order, while creating it in the object syntax
+    const sortObj = {};
     if(!!query.sort){
       console.log(query.sort);
       console.log(query.sort.split(","));
@@ -76,7 +75,6 @@ module.exports.getAllUsers = async(query) => {
 
     // Get user data from the db
     let users = await queries.fetchAllUsers(query, sortObj);
-  
     if(!users){
       throw new customErrorType.NotFound('No users in the database');
     }
