@@ -30,13 +30,15 @@ module.exports.createPost = async(data, userData) => {
 
 // Returns all posts results
 // Filters result from the query to remove, the internal id, and add an author field with the url of the user as the value
-module.exports.fetchAllPosts = async() => {
+module.exports.fetchAllPosts = async(query) => {
   try {
-    const result = await queries.findAllPosts()
+    console.log(`req.query:`, query);
+    const result = await queries.findAllPosts(query)
     if(!result){
       throw new customErrorType.BadRequest(`No posts found`);
     }
-    console.log(result);
+    
+    // console.log(result);
     const filteredResult = []
     result.forEach((item) => {
       const { id, authorId, ...newItem } = item
@@ -63,6 +65,8 @@ module.exports.fetchSpecificPost = async(publicId) => {
     if(!result){
       throw new customErrorType.NotFound(`No post found by that id`);
     }
+
+    console.log(result);
 
     const { id, authorId, ...filteredResult} = result;
     filteredResult.author = `/api/v1/users/${authorId}`;
