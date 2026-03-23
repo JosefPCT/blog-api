@@ -14,10 +14,12 @@ module.exports.createPostByUserId = async(data, userId) => {
 }
 
 // Find all posts
-module.exports.findAllPosts = async(optionalArgs) => {
+// Optional arguments from the req.query string `optionalArgs` : title, text, isPublished, dateFrom, dateTo, authorFirstName, authorLastName, numberOfComments, page, mode
+// Optional `sortArgs` when `sort` req.query string is present
+module.exports.findAllPosts = async(optionalArgs, sortArgs) => {
 
-  let userIdsForComments = [];
   let authorIds = [];
+  let postIds = [];
 
   const createdDateFrom = optionalArgs.dateFrom ? new Date(optionalArgs.dateFrom) : undefined;
   const createdDateTo = optionalArgs.dateTo ? new Date(optionalArgs.dateTo) : undefined;
@@ -42,29 +44,35 @@ module.exports.findAllPosts = async(optionalArgs) => {
     });
 
     const filteredUsers = usersWithCommentCount.filter(userGrp => userGrp._count.id >= optionalArgs.numberOfComments);
-    userIdsForComments = filteredUsers.map(comment => comment.postId);
+    postIds = filteredUsers.map(comment => comment.postId);
   }
 
-  const userIds = [...authorIds, ...userIdsForComments];
-  console.log(optionalArgs.numberOfComments && parseInt(optionalArgs.numberOfComments) !== 0);
-
-  
-  // console.log(targetUserIds);
+  // const userIds = [...authorIds, ...userIdsForComments];
 
   const whereData = {
     title: optionalArgs.title ? { contains: optionalArgs.title } : undefined,
     text: optionalArgs.text ? { contains: optionalArgs.text } : undefined,
     isPublished: optionalArgs.isPublished ? ( optionalArgs.isPublished === 'true' ? true : false ) : undefined,
     createdAt: optionalArgs.dateFrom || optionalArgs.dateTo ? { gte: createdDateFrom, lte: createdDateTo} : undefined,
-    authorId: optionalArgs.authorFirstName || optionalArgs.authorLastName ? { in: userIds } : undefined,
-    id: (optionalArgs.numberOfComments && parseInt(optionalArgs.numberOfComments) !== 0) ? { in: userIds} : undefined,
+    authorId: optionalArgs.authorFirstName || optionalArgs.authorLastName ? { in: authorIds } : undefined,
+    id: (optionalArgs.numberOfComments && parseInt(optionalArgs.numberOfComments) !== 0) ? { in: postIds} : undefined,
     comments: optionalArgs.numberOfComments && parseInt(optionalArgs.numberOfComments) === 0 ? { none: {}} : undefined,
   };
 
   console.log(whereData);
 
   return await prisma.post.findMany({
-    where: whereData
+    take: optionalArgs.page ? 2 : undefined,
+    skip: optionalArgs.page ? (optionalArgs.page - 1 ) * 2 : undefined,
+    where: whereData,
+    orderBy: {
+      title: sortArgs.title ? sortArgs.title : undefined,
+      text: sortArgs.text ? sortArgs.text : undefined,
+      isPublished: sortArgs.isPublished ?  sortArgs.isPublished : undefined,
+      createdAt: sortArgs.createdAt ? sortArgs.createdAt : undefined,
+      updatedAt: sortArgs.updatedAt ? sortArgs.updatedAt : undefined,
+      comments: sortArgs.comments ? { _count: sortArgs.comments } : undefined
+    }
   });
 }
 

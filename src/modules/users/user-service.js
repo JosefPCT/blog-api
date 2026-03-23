@@ -2,6 +2,7 @@
 
 const queries = require('./user-queries.js');
 const passwordUtils = require('../../utils/passwordUtils.js');
+const prismaUtils = require('../../utils/prismaUtils.js');
 const utils = require('../../utils/userUtils.js');
 const customErrorType = require('../../utils/extended-errors.js');
 const { PrismaClientKnownRequestError } = require("@prisma/client/runtime/client");
@@ -43,7 +44,7 @@ module.exports.getAllUsers = async(query) => {
   try {
     // Creating the sort object to pass onto the query function
     // Basically just replaces the symbols with the appropriate sorting order, while creating it in the object syntax
-    const sortObj = await utils.createSortObject(query);
+    const sortObj = await prismaUtils.createSortingFromQuery(query);
     console.log(sortObj);
 
     // Get user data from the db

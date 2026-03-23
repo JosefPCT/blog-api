@@ -1,6 +1,7 @@
 // Has query layer to handle db interactions
 
 const prisma = require("../../config/prisma.js");
+const prismaUtils = require('../../utils/prismaUtils.js');
 const queries = require('./post-queries.js');
 const customErrorType = require('../../utils/extended-errors.js');
 const { PrismaClientKnownRequestError } = require("@prisma/client/runtime/client");
@@ -33,7 +34,9 @@ module.exports.createPost = async(data, userData) => {
 module.exports.fetchAllPosts = async(query) => {
   try {
     console.log(`req.query:`, query);
-    const result = await queries.findAllPosts(query)
+
+    const sortObj = await prismaUtils.createSortingFromQuery(query);
+    const result = await queries.findAllPosts(query, sortObj)
     if(!result){
       throw new customErrorType.BadRequest(`No posts found`);
     }
