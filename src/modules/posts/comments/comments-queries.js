@@ -16,10 +16,15 @@ module.exports.createCommentByParentPostId = async (
 };
 
 // Finds all comments based on the passed postId
-module.exports.findAllPostComments = async(postId) => {
+module.exports.findAllPostComments = async(postId, optionalArgs, sortArgs) => {
   return await prisma.comment.findMany({
     where: {
       postId: postId
+    },
+    orderBy: {
+      text: sortArgs.text ? sortArgs.text : undefined,
+      createdAt: sortArgs.createdAt ? sortArgs.createdAt : undefined,
+      updatedAt: sortArgs.updatedAt ? sortArgs.updatedAt: undefined,
     }
   })
 }

@@ -1,6 +1,8 @@
 const commentQueries = require("./comments-queries.js")
 const postQueries = require("../post-queries.js")
 const customErrors = require('../../../utils/extended-errors.js');
+const prismaUtils = require('../../../utils/prismaUtils.js');
+
 const { PrismaClientKnownRequestError } = require("@prisma/client/runtime/client");
 
 // Creates a comment based on the current user id, the parent post id and the passed data
@@ -32,13 +34,15 @@ module.exports.createPostComment = async(publicPostId, userData, data) => {
 // Checks if post exists, then gets all the comments based on the post id
 // Filter the returning object to remove the internal id of the comments, the internal id of the commenters and the internal id of the post
 // Add an author field that has the url of the commenter/user
-module.exports.fetchPostComments = async(publicPostId) => {
+module.exports.fetchPostComments = async(publicPostId, query) => {
   try {
     const post = await postQueries.findPostByPublicId(publicPostId)
     if(!post){
       throw new customErrors.NotFound("Post parent does not exist");
     }
-    const comments = await commentQueries.findAllPostComments(post.id);
+    const sortObj = await prismaUtils.createSortingFromQuery(query);
+    console.log(sortObj);
+    const comments = await commentQueries.findAllPostComments(post.id, query, sortObj);
 
     filteredComments = [];
     comments.forEach((comment) => {

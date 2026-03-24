@@ -30,7 +30,7 @@ module.exports.getPostComments = [
   async(req, res) => {
     console.log('`/posts/:postId/comments GET route handler');
     console.log(`:postId is ${req.params.postId}`);
-    const comments = await commentsService.fetchPostComments(req.params.postId);
+    const comments = await commentsService.fetchPostComments(req.params.postId, req.query);
     res.status(200).json(comments);
   }
 ]
