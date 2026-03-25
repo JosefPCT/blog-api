@@ -16,11 +16,48 @@ module.exports.createCommentByParentPostId = async (
 };
 
 // Finds all comments based on the passed postId
-module.exports.findAllPostComments = async(postId, optionalArgs, sortArgs) => {
+// Possible optionalArgs arguments are: text,dateFrom,dateTo, page, mode, isOwnComment(boolean)
+// Possible sortArgs arguments are: text, createdAt, updatedAt, likes
+module.exports.findAllPostComments = async(postIdTarg, optionalArgs, sortArgs) => {
+
+  const createdDateFrom = optionalArgs.dateFrom ? new Date(optionalArgs.dateFrom) : undefined;
+  const createdDateTo = optionalArgs.dateTo ? new Date(optionalArgs.dateTo) : undefined;
+
+  const whereData = {
+    postId: postIdTarg,
+    text: optionalArgs.text ? { contains: optionalArgs.text, mode: 'insensitive' } : undefined,
+    createdAt: optionalArgs.dateFrom || optionalArgs.dateTo ? { gte: createdDateFrom, lte: createdDateTo } : undefined,
+    // authorId: optionalArgs.IsOwnComment === 'true' ? userIdTarg : undefined,
+  }
+
+  const { postId, ...newData } = whereData;
+  const OrWhereData = Array.from(Object.keys(newData), item => ({ [item]: whereData[item] }));
+  
+  let option;
+  switch(optionalArgs.mode){
+    case 'not': 
+        console.log("Switch: Not");
+        option = { AND: { postId: postId, NOT: OrWhereData}}
+        break;
+    case 'and': 
+        console.log("Switch: And");
+        option = { AND: whereData}
+        break;
+    case 'or': 
+        console.log("Switch: or");
+        option = { AND: { postId: postId, OR: OrWhereData}}
+        break;
+    case undefined:
+        option = { AND: whereData }
+    default: 
+        console.log("Switch default");
+        option = undefined;
+  }
+
   return await prisma.comment.findMany({
-    where: {
-      postId: postId
-    },
+    take: optionalArgs.page ? 2 : undefined,
+    skip: optionalArgs.page ? (optionalArgs.page - 1) * 2 : undefined,
+    where: option,
     orderBy: {
       text: sortArgs.text ? sortArgs.text : undefined,
       createdAt: sortArgs.createdAt ? sortArgs.createdAt : undefined,
