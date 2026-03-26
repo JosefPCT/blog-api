@@ -14,15 +14,16 @@ datasource db {
 }
 
 model User {
-  id        Int     @id @default(autoincrement())
-  email     String  @unique
-  hash      String
-  firstName String
-  lastName  String
-  isAuthor  Boolean @default(false)
-  isAdmin   Boolean @default(false)
-  posts     Post[]
-  comments  Comment[]
+  id             Int       @id @default(autoincrement())
+  email          String    @unique
+  hash           String
+  firstName      String
+  lastName       String
+  isAuthor       Boolean   @default(false)
+  isAdmin        Boolean   @default(false)
+  posts          Post[]
+  comments       Comment[] @relation("WrittenComments")
+  liked_comments Comment[] @relation("LikedComments")
 }
 
 // Use @map and @@map options to adhere to naming conventions of snake case in databases and pascalCase and CamelCase in fields and models in prisma
@@ -36,7 +37,7 @@ model Post {
   updatedAt   DateTime? @updatedAt @map("updated_at") @db.Timestamptz(6)
   authorId    Int       @map("author_id")
   author      User      @relation(fields: [authorId], references: [id])
-  comments  Comment[]
+  comments    Comment[]
 
   @@map("posts")
 }
@@ -48,9 +49,11 @@ model Comment {
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
   commenterId Int      @map("commenter_id")
-  commenter  User  @relation(fields: [commenterId], references: [id], onDelete: Cascade)
-  postId  Int  @map("post_id")
-  parent  Post  @relation(fields: [postId], references: [id]) 
+  commenter   User     @relation("WrittenComments", fields: [commenterId], references: [id], onDelete: Cascade)
+  postId      Int      @map("post_id")
+  parent      Post     @relation(fields: [postId], references: [id])
+  liked_by    User[]   @relation("LikedComments")
+  likes       Int      @default(0)
 
   @@map("comments")
 }
