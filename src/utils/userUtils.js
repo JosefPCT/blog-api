@@ -75,15 +75,24 @@ module.exports.filterUserComments = (comments) => {
 
 // Create the data object to pass on to the update query, only includes fields that are present on the req.body
 module.exports.createUpdateDataObject = (data) => {
-  const detailsArr = ["email", "firstName", "lastName", "hash", "isAuthor"];
+  const detailsArr = ["email", "firstName", "lastName", "hash", "isAuthor", "likedComment", "dislikedComment"];
   const filteredData = {};
 
   Object.entries(data).forEach(([key, value]) => {
     if (detailsArr.includes(key)) {
-      // console.log(`${key}: ${value}`);
-      filteredData[`${key}`] = value;
+      console.log(`${key}: ${value}`);
+      
+      // Checks if update includes liking/disliking a comment, creates the proper structure to pass on to the `data` for it
+      if(key === "likedComment"){
+        filteredData[`liked_comments`] = { connect: [ { id: value}]}
+      } else if( key === "dislikedComment"){
+        filteredData[`liked_comments`] = { disconnect: [ { id: value}]}
+      } else {
+        filteredData[`${key}`] = value;
+      }
     }
   });
+  console.log(filteredData);
   return filteredData;
 };
 

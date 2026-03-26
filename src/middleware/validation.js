@@ -35,6 +35,9 @@ module.exports.validateUser = [
     .isBoolean().withMessage(`isAuthor field ${booleanErr}`),
   body("isAdmin")
     .isBoolean().withMessage(`isAdmin field ${booleanErr}`)
+    .optional(),
+  body("likedComment")
+    .notEmpty().withMessage(`likedComment field ${emptyErr}`)
     .optional()
 ];
 
@@ -62,7 +65,16 @@ module.exports.validateUpdateUser = [
     .optional(),
   body("isAdmin")
     .isBoolean().withMessage(`isAdmin field ${booleanErr}`)
+    .optional(),
+  body("likedComment")
+    .notEmpty().withMessage(`likedComment field ${emptyErr}`)
+    .isNumeric().withMessage(`likedComment field value must be numeric`)
+    .optional(),
+  body("dislikedComment")
+    .notEmpty().withMessage(`dislikedComment field ${emptyErr}`)
+    .isNumeric().withMessage(`likedComment field value must be numeric`)
     .optional()
+
 ]
 
 // Post

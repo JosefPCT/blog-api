@@ -108,7 +108,8 @@ module.exports.fetchAllUsers = async (optionalArgs, sortObj) => {
     },
     include: {
       posts: true,
-      comments: true
+      comments: true,
+      liked_comments: true,
     }
   });
 };
@@ -122,6 +123,7 @@ module.exports.findUserById = async (id) => {
     include: {
       posts: true,
       comments: true,
+      liked_comments: true,
     }
   });
 };
@@ -144,6 +146,65 @@ module.exports.findUserByEmail = async(email) => {
 
 // Finds a user by their id and update it's data
 module.exports.updateUserById = async (id, data) => {
+  console.log("Update query");
+  console.log(data);
+  console.log(Object.hasOwn(data, "liked_comments"));
+
+  // Check if update req.body has liked_comment update operation
+  let commentId;
+  let operation;
+
+  // Check if update operation includes liking/disliking a comment,
+  // Piece of code responsible for changing the value of the `likes` field in the Comment model
+  if(Object.hasOwn(data, "liked_comments")){
+    // Destructure the 'connect' object to both check if connect is present or not, and get the value of the id of the comment
+    const { liked_comments: { connect } } = data;
+    // console.log("connect object");
+    // console.log(connect);
+
+    // Check if `connect` object is present or not, automatically assumes a `disconnect` object is present if not
+    if(connect !== undefined) {
+      commentId = connect[0].id;
+      operation = "increment";
+    } else {
+      const { liked_comments: { disconnect } } = data;
+      commentId = disconnect[0].id;
+      operation = "decrement";
+    }
+    // console.log("Comment id is:");
+    // console.log(commentId);
+    // console.log("Updating comment likes");
+
+    // Query to check if there is already a connection to the record being connected, prevents likes value to increase if already connected
+    const connection = await prisma.user.findFirst({
+      where: {
+        id,
+        liked_comments: {
+          some: {
+            id: commentId
+          }
+        }
+      }
+    });
+    const isAlreadyConnected = !!connection;
+    console.log(`is Connected? ${isAlreadyConnected}`);
+
+    // Logical check to only proceed on updating the `likes` field if either:
+    // There is not a connection already and the update operation is liking
+    // Or If there is already a connection and the update operation is disliking
+    if( (!isAlreadyConnected && operation === "increment") || (isAlreadyConnected && operation === "decrement")){
+      await prisma.comment.update({
+        where: {
+          id: commentId,
+        },
+        data:{
+          likes: { [operation]: 1}
+        }
+      })
+    };
+  }
+
+  // Main query to update other user details
   return await prisma.user.update({
     where: {
       id,
