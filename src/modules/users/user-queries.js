@@ -145,6 +145,7 @@ module.exports.findUserByEmail = async(email) => {
 // UPDATE
 
 // Finds a user by their id and update it's data
+// req.body accepted fields: "email", "firstName", "lastName", "hash", "isAuthor", "likedComment", "dislikedComment"
 module.exports.updateUserById = async (id, data) => {
   console.log("Update query");
   console.log(data);
@@ -155,7 +156,7 @@ module.exports.updateUserById = async (id, data) => {
   let operation;
 
   // Check if update operation includes liking/disliking a comment,
-  // Piece of code responsible for changing the value of the `likes` field in the Comment model
+  // Piece of code responsible for changing the value of the `likes` field in the Comment model 
   if(Object.hasOwn(data, "liked_comments")){
     // Destructure the 'connect' object to both check if connect is present or not, and get the value of the id of the comment
     const { liked_comments: { connect } } = data;
