@@ -51,7 +51,7 @@ module.exports.findAllPostComments = async(postIdTarg, optionalArgs, sortArgs) =
         option = { AND: whereData }
     default: 
         console.log("Switch default");
-        option = undefined;
+        option = { AND: whereData}
   }
 
   return await prisma.comment.findMany({

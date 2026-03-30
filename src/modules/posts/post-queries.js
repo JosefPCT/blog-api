@@ -76,6 +76,9 @@ module.exports.findAllPosts = async(optionalArgs, sortArgs) => {
       createdAt: sortArgs.createdAt ? sortArgs.createdAt : undefined,
       updatedAt: sortArgs.updatedAt ? sortArgs.updatedAt : undefined,
       comments: sortArgs.comments ? { _count: sortArgs.comments } : undefined
+    },
+    include: {
+      // comments: true,
     }
   });
 }
@@ -87,7 +90,15 @@ module.exports.findPostByPublicId = async(publicId) => {
         publicId: publicId,
       },
       include: {
-        comments: true
+        comments: {
+          select: { 
+            publicId: true,
+            text: true,
+            _count: {
+              select: { liked_by: true }
+            }
+          }
+        }
       }
     });
 }

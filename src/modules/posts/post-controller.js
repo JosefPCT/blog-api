@@ -71,7 +71,8 @@ module.exports.updatePostById = [
       return res.status(404).json({ error: 'Post did not exist, post data not updated'});
     }
 
-    res.status(200).json(updatedPost);
+    // res.status(200).json(updatedPost);
+    res.status(200).json("Updated Post Successfully")
   }
 ]
 
@@ -88,6 +89,7 @@ module.exports.deletePostById = [
     if(!deletedPost){
       return res.status(404).json({ error: 'Post did not exist, deleting unsuccessful'});
     }
-    res.status(200).json(deletedPost);
+    // res.status(200).json(deletedPost);
+    res.status(200).json("Deleted Post Successfully")
   }
 ]

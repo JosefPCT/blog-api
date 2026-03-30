@@ -61,7 +61,8 @@ module.exports.updateSpecificPostComment = [
       res.status(400).json(errors)
     }
     const updatedComment = await commentsService.updateSpecificPostComment(req.params.postId, req.params.commentId, req.user, matchedData(req));
-    res.status(200).json(updatedComment);
+    // res.status(200).json(updatedComment);
+    res.status(200).json("Updated Comment Successfully")
   }
 ]
 
@@ -73,6 +74,7 @@ module.exports.deleteSpecificPostComment = [
     console.log(`'/posts/:postId/comments/:commentId' DELETE route handler`);
     console.log(`:postId is ${req.params.postId}, :commentId is ${req.params.commentId}`);
     const deletedComment = await commentsService.deleteSpecificPostComment(req.params.postId, req.params.commentId, req.user);
-    res.status(200).json(deletedComment);
+    // res.status(200).json(deletedComment);
+    res.status(200).json("Deleted Comment Successfully")
   }
 ]
