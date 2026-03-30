@@ -20,7 +20,8 @@ module.exports.createPostComment = [
       res.status(400).json(errors)
     }
     const createdComment = await commentsService.createPostComment(req.params.postId, req.user, matchedData(req))
-    res.status(200).json(createdComment)
+    // res.status(200).json(createdComment)
+    res.redirect(`${req.baseUrl}/${createdComment.publicId}`);
   }
 ]
 

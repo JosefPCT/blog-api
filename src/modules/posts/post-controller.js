@@ -22,7 +22,8 @@ module.exports.createPost = [
     }
     const createdPost = await postsService.createPost(matchedData(req), req.user);
     console.log('Created Post:', createdPost);
-    res.status(200).json(createdPost);
+    // res.status(200).json(createdPost);
+    res.redirect(`${req.baseUrl}/${createdPost.publicId}`);
   }
 ]
 

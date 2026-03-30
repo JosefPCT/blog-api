@@ -22,7 +22,8 @@ module.exports.usersPostRoute = [
     const { email, password, firstName, lastName, isAuthor, isAdmin } = matchedData(req);
     const newUser = await userService.register(email, password, firstName, lastName, isAuthor, isAdmin);
 
-    res.status(201).json(newUser);
+    // res.status(201).json(newUser);
+    res.redirect(`${req.baseUrl}/${newUser.id}`);
   }
 ]
 
