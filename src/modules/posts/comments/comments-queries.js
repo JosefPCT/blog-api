@@ -62,6 +62,7 @@ module.exports.findAllPostComments = async(postIdTarg, optionalArgs, sortArgs) =
       text: sortArgs.text ? sortArgs.text : undefined,
       createdAt: sortArgs.createdAt ? sortArgs.createdAt : undefined,
       updatedAt: sortArgs.updatedAt ? sortArgs.updatedAt: undefined,
+      liked_by: sortArgs.likes ? { _count: sortArgs.likes }: undefined,
     }
   })
 }
