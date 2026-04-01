@@ -145,7 +145,7 @@ module.exports.findUserByEmail = async(email) => {
 // UPDATE
 
 // Finds a user by their id and update it's data
-// req.body accepted fields: "email", "firstName", "lastName", "hash", "isAuthor", "likedComment", "dislikedComment"
+// req.body accepted fields: "email", "firstName", "lastName", "password", `confirm_password`, "isAuthor", "likedComment", "dislikedComment"
 module.exports.updateUserById = async (id, data) => {
   console.log("Update query");
   console.log(data);
