@@ -1,3 +1,5 @@
+const passwordUtils = require('./passwordUtils');
+
 // Utility functions used by `getAllUsers()` function from the service layer
 // Checks if req.query is not empty
 module.exports.isQueryEmpty = (query) => {
@@ -87,6 +89,8 @@ module.exports.createUpdateDataObject = (data) => {
         filteredData[`liked_comments`] = { connect: [ { id: value}]}
       } else if( key === "dislikedComment"){
         filteredData[`liked_comments`] = { disconnect: [ { id: value}]}
+      } else if( key === "password") {
+        console.log("password");
       } else {
         filteredData[`${key}`] = value;
       }

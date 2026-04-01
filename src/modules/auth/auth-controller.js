@@ -4,6 +4,7 @@ const passport = require("passport");
 // Handler for POST '/login'
 // Uses passport's authenticate method with local to validate inputted username and password
 // If succesful, creates a token and send to client
+// Accepts fields (req.body): email and password 
 module.exports.loginPostRoute = [
   passport.authenticate("local", {
     session: false,
