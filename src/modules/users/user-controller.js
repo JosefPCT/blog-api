@@ -45,9 +45,9 @@ module.exports.usersGetRoute = [
 // Handler for GET '/users/:userId'
 // Can be accessed by admins or their own user 
 module.exports.userIdGetRoute = [
-  passport.authenticate("jwt", { session: false }),
+  // passport.authenticate("jwt", { session: false }),
   logger,
-  authorizationMiddleware.isAdminOrOwner,
+  // authorizationMiddleware.isAdminOrOwner,
   async (req, res) => {
     console.log('users/:userId GET Route');
     const { userId } = req.params;

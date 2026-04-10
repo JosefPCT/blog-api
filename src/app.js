@@ -5,6 +5,7 @@ require('dotenv').config();
 
 // Express Stuff
 const express = require('express');
+const cors = require('cors');
 const app = express();
 
 const PORT = process.env.PORT || 3000;
@@ -21,7 +22,11 @@ const { globalErrorHandler } = require('./middleware/globalErrorHandler.js');
 
 // Main App Logic
 
-// Makes data payload's body available in `req.body` object
+app.use(cors({
+  origin: `http://localhost:5173`
+}));
+// app.use(cors());
+// Makes data payload's body available in `req.body` object 
 app.use(express.json());
 // app.use(express.urlencoded({ extended: true }));
 
