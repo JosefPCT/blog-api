@@ -8,7 +8,7 @@ const passport = require("passport");
 module.exports.loginPostRoute = [
   passport.authenticate("local", {
     session: false,
-    failureRedirect: "/login-failure",
+    failureRedirect: "login-failure",
   }),
   (req, res) => {
     try {
@@ -38,3 +38,9 @@ module.exports.testGetRoute = [
     return res.status(200).json({ message: 'Protected route Test route', user: req.user})
   },
 ];
+
+module.exports.loginFailureGetRoute = [
+  async (req, res) => {
+    return res.status(401).json({ message: 'Login Failure'});
+  }
+]
