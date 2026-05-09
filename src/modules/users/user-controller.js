@@ -42,6 +42,27 @@ module.exports.usersGetRoute = [
   }
 ]
 
+// Handler for GET '/users/me'
+// Can only be accessed by a logged in user (any)
+module.exports.usersMeGetRoute = [
+  passport.authenticate("jwt", { session: false}),
+  logger,
+  async (req, res) => {
+    console.log(`users/me GET route`);
+    console.log(req.user);
+
+    // CHORE: Move filter logic to service layer (user-service)
+    const { hash, ...filteredUser} = req.user;
+
+    // let userInfo = {
+    //   message: "ROute protected",
+    //   user: filteredUser
+    // }
+
+    res.status(201).json(filteredUser);
+  }
+]
+
 // Handler for GET '/users/:userId'
 // Can be accessed by admins or their own user 
 module.exports.userIdGetRoute = [
