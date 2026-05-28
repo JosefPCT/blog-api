@@ -32,7 +32,8 @@ module.exports.validateUser = [
   body("lastName").trim()
     .notEmpty().withMessage(`Last name field ${emptyErr}`),
   body("isAuthor")
-    .isBoolean().withMessage(`isAuthor field ${booleanErr}`),
+    .isBoolean().withMessage(`isAuthor field ${booleanErr}`)
+    .optional(),
   body("isAdmin")
     .isBoolean().withMessage(`isAdmin field ${booleanErr}`)
     .optional(),
