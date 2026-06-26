@@ -24,11 +24,23 @@ module.exports.findAllPosts = async(optionalArgs, sortArgs) => {
   const createdDateFrom = optionalArgs.dateFrom ? new Date(optionalArgs.dateFrom) : undefined;
   const createdDateTo = optionalArgs.dateTo ? new Date(optionalArgs.dateTo) : undefined;
 
+  // if(optionalArgs.authorFirstName || optionalArgs.authorLastName){
+  //   const targetUsers = await prisma.user.findMany({
+  //     where: {
+  //       firstName: optionalArgs.authorFirstName ? { contains: optionalArgs.authorFirstName, mode: "insensitive" } : undefined,
+  //       lastName: optionalArgs.authorLastName ? { contains: optionalArgs.authorLastName, mode: "insensitive"} : undefined
+  //     },
+  //   });
+  //   authorIds = targetUsers.map(user => user.id);
+  // }
+
   if(optionalArgs.authorFirstName || optionalArgs.authorLastName){
     const targetUsers = await prisma.user.findMany({
       where: {
-        firstName: optionalArgs.authorFirstName ? { contains: optionalArgs.authorFirstName } : undefined,
-        lastName: optionalArgs.authorLastName ? { contains: optionalArgs.authorLastName} : undefined
+        OR: [
+          { firstName: optionalArgs.authorFirstName ? { contains: optionalArgs.authorFirstName, mode: "insensitive" } : undefined }, 
+          { lastName: optionalArgs.authorLastName ? { contains: optionalArgs.authorLastName, mode: "insensitive"} : undefined }
+        ]
       },
     });
     authorIds = targetUsers.map(user => user.id);
@@ -60,6 +72,9 @@ module.exports.findAllPosts = async(optionalArgs, sortArgs) => {
   console.log(whereData);
 
   const OrWhereData = Array.from(Object.keys(whereData), (key) => ({ [key]: whereData[key]}));
+
+  console.log("Or where data:....");
+  console.log(OrWhereData);
 
   return await prisma.post.findMany({
     take: optionalArgs.page ? 2 : undefined,
