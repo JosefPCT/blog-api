@@ -76,9 +76,12 @@ module.exports.findAllPosts = async(optionalArgs, sortArgs) => {
   console.log("Or where data:....");
   console.log(OrWhereData);
 
+  console.log("LIMIT TESTING");
+  console.log(optionalArgs.limit);
+
   return await prisma.post.findMany({
-    take: optionalArgs.page ? 2 : undefined,
-    skip: optionalArgs.page ? (optionalArgs.page - 1 ) * 2 : undefined,
+    take: optionalArgs.page ? parseInt(optionalArgs.limit) : undefined,
+    skip: optionalArgs.page ? (optionalArgs.page - 1 ) * parseInt(optionalArgs.limit) : undefined,
     where: {
       AND: optionalArgs.mode === 'and' || optionalArgs.mode === undefined ? whereData : undefined,
       NOT: optionalArgs.mode === 'not' ? { OR: OrWhereData } : undefined,
