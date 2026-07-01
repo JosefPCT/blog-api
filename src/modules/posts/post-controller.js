@@ -32,6 +32,8 @@ module.exports.createPost = [
 module.exports.getAllPosts = [
   async(req, res) => {
     console.log(`'/posts' GET route handler`);
+    console.log("Req: query");
+    console.log(req.query);
     const posts = await postsService.fetchAllPosts(req.query);
     res.status(200).json(posts);
   }

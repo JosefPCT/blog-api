@@ -83,6 +83,7 @@ Accepts optional query strings such as:
     - `comments`
 - `page` : Int/Number
 - `mode` : or/not/and
+- `limit` : Int/Number (The total number of results that will be retrieved)
 
 Returns filtered JSON data of all the posts or posts that satisfies the optional queries
 
