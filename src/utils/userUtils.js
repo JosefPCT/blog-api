@@ -80,6 +80,9 @@ module.exports.createUpdateDataObject = (data) => {
   const detailsArr = ["email", "firstName", "lastName", "hash", "isAuthor", "likedComment", "dislikedComment"];
   const filteredData = {};
 
+  console.log("data");
+  console.log(data);
+
   Object.entries(data).forEach(([key, value]) => {
     if (detailsArr.includes(key)) {
       console.log(`${key}: ${value}`);

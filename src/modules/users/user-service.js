@@ -95,7 +95,11 @@ module.exports.getUser = async(id) => {
 // Creates filtered data and sent to the query function to update
 // Filters data by checking if req.body includes valid fieldnames and ignores if not valid fieldname, accounts for if req.body have missing valid fieldname
 module.exports.updateUserData = async(userId, data) => {
-  data.hash = await passwordUtils.generatePassword(data.password);
+  console.log("Update User Data Service Layer");
+  console.log(data);
+  if(data.password){
+    data.hash = await passwordUtils.generatePassword(data.password);
+  }
   const filteredData = utils.createUpdateDataObject(data);
   console.log("Updating...Filter Data for User Update Check");
   console.log(filteredData);
