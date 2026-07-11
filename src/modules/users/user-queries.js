@@ -152,7 +152,7 @@ module.exports.updateUserById = async (id, data) => {
   console.log(Object.hasOwn(data, "liked_comments"));
 
   // Check if update req.body has liked_comment update operation
-  let commentId;
+  let commentId; // The public id of the comment (Type: UUID)
   let operation;
 
   // Check if update operation includes liking/disliking a comment,
@@ -165,11 +165,11 @@ module.exports.updateUserById = async (id, data) => {
 
     // Check if `connect` object is present or not, automatically assumes a `disconnect` object is present if not
     if(connect !== undefined) {
-      commentId = connect[0].id;
+      commentId = connect[0].publicId;
       operation = "increment";
     } else {
       const { liked_comments: { disconnect } } = data;
-      commentId = disconnect[0].id;
+      commentId = disconnect[0].publicId;
       operation = "decrement";
     }
     // console.log("Comment id is:");
@@ -182,7 +182,7 @@ module.exports.updateUserById = async (id, data) => {
         id,
         liked_comments: {
           some: {
-            id: commentId
+            publicId: commentId
           }
         }
       }
@@ -196,7 +196,7 @@ module.exports.updateUserById = async (id, data) => {
     if( (!isAlreadyConnected && operation === "increment") || (isAlreadyConnected && operation === "decrement")){
       await prisma.comment.update({
         where: {
-          id: commentId,
+          publicId: commentId,
         },
         data:{
           likes: { [operation]: 1}

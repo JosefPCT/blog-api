@@ -69,11 +69,11 @@ module.exports.validateUpdateUser = [
     .optional(),
   body("likedComment")
     .notEmpty().withMessage(`likedComment field ${emptyErr}`)
-    .isNumeric().withMessage(`likedComment field value must be numeric`)
+    .isUUID().withMessage(`likedComment field value must be numeric`)
     .optional(),
   body("dislikedComment")
     .notEmpty().withMessage(`dislikedComment field ${emptyErr}`)
-    .isNumeric().withMessage(`likedComment field value must be numeric`)
+    .isUUID().withMessage(`likedComment field value must be numeric`)
     .optional()
 
 ]

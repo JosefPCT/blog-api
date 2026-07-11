@@ -86,9 +86,9 @@ module.exports.createUpdateDataObject = (data) => {
       
       // Checks if update includes liking/disliking a comment, creates the proper structure to pass on to the `data` for it
       if(key === "likedComment"){
-        filteredData[`liked_comments`] = { connect: [ { id: value}]}
+        filteredData[`liked_comments`] = { connect: [ { publicId: value}]}
       } else if( key === "dislikedComment"){
-        filteredData[`liked_comments`] = { disconnect: [ { id: value}]}
+        filteredData[`liked_comments`] = { disconnect: [ { publicId: value}]}
       } else if( key === "password") {
         console.log("password");
       } else {

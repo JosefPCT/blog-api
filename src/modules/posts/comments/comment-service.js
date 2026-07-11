@@ -76,8 +76,14 @@ module.exports.fetchSpecificPostComment = async(publicPostId, publicCommentId) =
     if(!comment){
       throw new customErrors.NotFound("Comment does not exist or does not exist in this post");
     }
-    const { id, commenterId, postId, ...filteredComment } = comment;
-    filteredComment.author = `api/v1/users/${commenterId}`;
+    // Temporarily commented out code to enable showing the internal id of the comment for development purposes
+    // const { id, commenterId, postId, ...filteredComment } = comment;
+    // filteredComment.author = `api/v1/users/${commenterId}`;
+
+    // Temporary code
+    const { ...filteredComment } = comment;
+    filteredComment.author = `api/v1/users/${comment.commenterId}`;
+
     return filteredComment;
   } catch (error) {
     console.log(error)
