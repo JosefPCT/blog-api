@@ -160,8 +160,8 @@ module.exports.updateUserById = async (id, data) => {
   if(Object.hasOwn(data, "liked_comments")){
     // Destructure the 'connect' object to both check if connect is present or not, and get the value of the id of the comment
     const { liked_comments: { connect } } = data;
-    // console.log("connect object");
-    // console.log(connect);
+    console.log("connect object");
+    console.log(connect);
 
     // Check if `connect` object is present or not, automatically assumes a `disconnect` object is present if not
     if(connect !== undefined) {
@@ -172,9 +172,9 @@ module.exports.updateUserById = async (id, data) => {
       commentId = disconnect[0].publicId;
       operation = "decrement";
     }
-    // console.log("Comment id is:");
-    // console.log(commentId);
-    // console.log("Updating comment likes");
+    console.log("Comment id is:");
+    console.log(commentId);
+    console.log("Updating comment likes");
 
     // Query to check if there is already a connection to the record being connected, prevents likes value to increase if already connected
     const connection = await prisma.user.findFirst({
