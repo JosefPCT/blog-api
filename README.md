@@ -51,8 +51,8 @@ Accepted values:
 - `lastName`: string
 - `isAuthor`: boolean
 - `isAdmin`: boolean
-- `likedComments` : Int/id of the comment record
-- `dislikedComment` : Int/id of the comment record
+- `likedComments` : Public Id (UUID) (publicId) of the comment record
+- `dislikedComment` : Public Id (UUID) (publicId) of the comment record
 Returns a JSON success message when no error occurs
 
 #### `DELETE /api/v1/users/:userId`
