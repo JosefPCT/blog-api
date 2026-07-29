@@ -22,9 +22,25 @@ const { globalErrorHandler } = require('./middleware/globalErrorHandler.js');
 
 // Main App Logic
 
-app.use(cors({
-  origin: `http://localhost:5173`
-}));
+const allowedOrigins = [
+  `http://localhost:5172`,
+  `http://localhost:5173`,
+  `https://netlify.app`,
+  `https://blogfrontapp.netlify.app/`
+];
+
+const corsOptions = {
+  origin: function (origin, callback){
+    // Check if the origin is in the whitelist or if it's a local/server-to-server request (no origin)
+    if (!origin || allowedOrigins.includes(origin)){
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+};
+
+app.use(cors(corsOptions));
 // app.use(cors());
 // Makes data payload's body available in `req.body` object 
 app.use(express.json());
