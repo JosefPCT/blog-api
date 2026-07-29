@@ -6,7 +6,7 @@ const passwordUtils = require('../src/utils/passwordUtils.js')
 async function main(){
 
   const adminPassword = "admin"
-  const hashedAdminPassword = passwordUtils.generatePassword(adminPassword);
+  const hashedAdminPassword = await passwordUtils.generatePassword(adminPassword);
 
   const dani = await prisma.user.upsert({
     where: { email: 'dani@gmail.com' },
