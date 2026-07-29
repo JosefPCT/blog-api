@@ -17,7 +17,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node --watch src/app.js",
-    "start": "node src/app.js"
+    "start": "node src/app.js",
+    "build": "npx prisma generate && npx prisma migrate deploy"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.3.0",
